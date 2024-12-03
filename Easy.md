@@ -32,6 +32,27 @@ class Solution:
 
 I think my solution is quite naive by using double for loops. The good solution here makes use of dictionary in python. When we loop through the array, we can create a dictionary to store the keys and values in the reversed order!
 
+#### TwoSumII
+
+This is just a variation of the problem twoSum.
+
+```python
+class Solution:
+    def twoSum(self, numbers: List[int], target: int) -> List[int]:
+		seen = {}
+
+    for i, value in enumerate(numbers): #1
+    # calculate the number that is needed
+        remaining = target - numbers[i] #2
+
+        if remaining in seen: #3
+            # This is the only line I modified. I switched the order of the 
+            # two indexes, and add one to both of them
+            return [seen[remaining] + 1, i + 1]  #4
+        else:
+            seen[value] = i  #5
+```
+
 #### Palindrome Number
 
 Given an integer `x`, return `true` *if* `x` *is a* ***palindrome***, *and* `false` *otherwise*.
