@@ -125,12 +125,36 @@ else:
   fruits.extend(["orange", "grape"])
   ```
 
+- Reverse the list
+
+  ```python
+  s = [1,2,3]
+  reversed_s = s[::-1]
+  ```
+
+  
+
 ### Accessing Elements
 - Indexing starts from 0
   ```python
   print(fruits[0])  # apple
   print(fruits[-1]) # grape
   ```
+
+### Stack
+
+```python
+stack = []
+# push
+stack.append(1)
+# pop
+stack.pop()
+# Check if the stack is empty
+if not stack:
+    print("Stack is empty")
+```
+
+
 
 ## Dictionary
 - Key-value pairs, accessed with keys
