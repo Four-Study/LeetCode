@@ -246,3 +246,82 @@ There are several things I can summarize:
 | **Operands**         | Works with integers, Booleans, or NumPy arrays | Works with any type |
 | **Short-circuiting** | No                                             | Yes                 |
 | **Result**           | A computed value (bitwise or element-wise)     | One of the operands |
+
+### Remove Duplicates from Sorted Array
+
+Given an integer array `nums` sorted in **non-decreasing order**, remove the duplicates [**in-place**](https://en.wikipedia.org/wiki/In-place_algorithm) such that each unique element appears only **once**. The **relative order** of the elements should be kept the **same**. Then return *the number of unique elements in* `nums`.
+
+Consider the number of unique elements of `nums` to be `k`, to get accepted, you need to do the following things:
+
+- Change the array `nums` such that the first `k` elements of `nums` contain the unique elements in the order they were present in `nums` initially. The remaining elements of `nums` are not important as well as the size of `nums`.
+- Return `k`.
+
+**Custom Judge:**
+
+The judge will test your solution with the following code:
+
+```c++
+int[] nums = [...]; // Input array
+int[] expectedNums = [...]; // The expected answer with correct length
+
+int k = removeDuplicates(nums); // Calls your implementation
+
+assert k == expectedNums.length;
+for (int i = 0; i < k; i++) {
+    assert nums[i] == expectedNums[i];
+}
+```
+
+If all assertions pass, then your solution will be **accepted**.
+
+I made the following solution, which is not elegant at all. Because I have the double loop, which makes it out of time limit.
+
+```python
+class Solution:
+    def removeDuplicates(self, nums: List[int]) -> int:
+        n = len(nums)
+        k = 1
+        for _ in range(n-1):
+            if nums[k-1] == nums[k]:
+                for i in range(k, n-1):
+                    nums[i] = nums[i + 1]
+            else:
+                k = k + 1
+        return k
+```
+
+Here is the solution i copied. 
+
+```python
+class Solution:
+    def removeDuplicates(self, nums: List[int]) -> int:
+        j = 1
+        for i in range(1, len(nums)):
+            if nums[i] != nums[i - 1]: ## this captures each unique element essentially
+                nums[j] = nums[i]
+                j += 1
+        return j
+```
+
+### Remove Element
+
+Given an integer array `nums` and an integer `val`, remove all occurrences of `val` in `nums` [**in-place**](https://en.wikipedia.org/wiki/In-place_algorithm). The order of the elements may be changed. Then return *the number of elements in* `nums` *which are not equal to* `val`.
+
+Consider the number of elements in `nums` which are not equal to `val` be `k`, to get accepted, you need to do the following things:
+
+- Change the array `nums` such that the first `k` elements of `nums` contain the elements which are not equal to `val`. The remaining elements of `nums` are not important as well as the size of `nums`.
+- Return `k`.
+
+After I studied from the last problem, I obtained the following answer quite soon.
+
+```python
+class Solution:
+    def removeElement(self, nums: List[int], val: int) -> int:
+        j = 0
+        for i in range(len(nums)):
+            if nums[i] != val:
+                nums[j] = nums[i]
+                j = j + 1
+        return j
+```
+
