@@ -394,3 +394,59 @@ class Solution:
 
 Keypoint: **`self` keyword**: It ensures that the `searchInsert` method is called as part of the current instance of the `Solution` class.
 
+### Length of Last Word
+
+Given a string `s` consisting of words and spaces, return *the length of the **last** word in the string.*
+
+A **word** is a maximal substring consisting of non-space characters only.
+
+My own answer is clean enough so I searched online.
+
+```python
+class Solution:
+    def lengthOfLastWord(self, s: str) -> int:
+        s_arr = s.split()
+        return len(s_arr[-1])
+```
+
+Two points to remember:
+
+1. `.split()` splits the string by any white space by default. 
+2. `array[-1]` slices the last element.
+
+### Plus One
+
+You are given a **large integer** represented as an integer array `digits`, where each `digits[i]` is the `ith` digit of the integer. The digits are ordered from most significant to least significant in left-to-right order. The large integer does not contain any leading `0`'s.
+
+Increment the large integer by one and return *the resulting array of digits*.
+
+My answer is okay. I tried to calculate the number first then convert it into a string, and an array.
+
+```python
+class Solution:
+    def plusOne(self, digits: List[int]) -> List[int]:
+        n = len(digits)
+        num_array = [digits[i] * 10**(n-i-1) for i in range(n)]
+        num = sum(num_array)
+        digits_new = [int(digit) for digit in str(num+1)]
+        return digits_new
+```
+
+The online answer is different:
+
+```python
+class Solution:
+    def plusOne(self, digits: List[int]) -> List[int]:
+
+        for i in range(len(digits) - 1, -1, -1):
+
+            if digits[i] + 1 != 10:
+                digits[i] += 1
+                return digits
+            
+            digits[i] = 0
+
+            if i == 0:
+                return [1] + digits
+```
+
