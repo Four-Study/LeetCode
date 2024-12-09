@@ -325,3 +325,72 @@ class Solution:
         return j
 ```
 
+### Find the Index of the First Occurrence in a String
+
+Given two strings `needle` and `haystack`, return the index of the first occurrence of `needle` in `haystack`, or `-1` if `needle` is not part of `haystack`.
+
+ 
+
+**Example 1:**
+
+```
+Input: haystack = "sadbutsad", needle = "sad"
+Output: 0
+Explanation: "sad" occurs at index 0 and 6.
+The first occurrence is at index 0, so we return 0.
+```
+
+**Example 2:**
+
+```
+Input: haystack = "leetcode", needle = "leeto"
+Output: -1
+Explanation: "leeto" did not occur in "leetcode", so we return -1.
+```
+
+This question is not that hard, but I could not solve it. So I just copied the answer over here.
+
+```python
+class Solution:
+    def strStr(self, haystack: str, needle: str) -> int:
+
+        if len(haystack) < len(needle):
+            return -1
+
+        for i in range(len(haystack)):
+            if haystack[i:i+len(needle)] == needle:
+                return i
+
+        return -1 
+```
+
+I was thinking about using two loops to check one by one, that was stupid. 
+
+This solution can work because you can actually slice string as if it is an array!
+
+### Search Insert Position
+
+Given a sorted array of distinct integers and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order.
+
+You must write an algorithm with `O(log n)` runtime complexity.
+
+I solved this problem with some help from ChatGPT:
+
+```python
+class Solution:
+    def searchInsert(self, nums: List[int], target: int) -> int:
+        n = len(nums)
+        if nums[n-1] < target:
+            return n
+        elif nums[0] > target:
+            return 0
+        elif nums[n // 2] == target:
+            return n // 2
+        elif nums[n // 2] > target:
+            return self.searchInsert(nums[:(n//2)], target)
+        else:
+            return n // 2 + self.searchInsert(nums[(n//2):], target)
+```
+
+Keypoint: **`self` keyword**: It ensures that the `searchInsert` method is called as part of the current instance of the `Solution` class.
+
