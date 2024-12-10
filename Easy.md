@@ -450,3 +450,46 @@ class Solution:
                 return [1] + digits
 ```
 
+### Add Binary
+
+Given two binary strings `a` and `b`, return *their sum as a binary string*.
+
+
+
+**Example 1:**
+
+```
+Input: a = "11", b = "1"
+Output: "100"
+```
+
+**Example 2:**
+
+```
+Input: a = "1010", b = "1011"
+Output: "10101"
+```
+
+I spent some time on this question because I think handling binary numbers is very important in programming.
+
+```python
+class Solution:
+  def addBinary(self, a: str, b: str) -> str:
+    summ = int(a, 2) + int(b, 2)
+
+    s = []
+    q = summ // 2
+    r = summ % 2
+    s.append(remainder)
+    while q != 0:
+        r = q % 2
+        q = q // 2
+        s.append(r)
+    return ''.join(map(str, s[::-1]))
+```
+
+There are several points to make:
+
+1. `int(a, 2)` can convert string `a` to a binary number directly
+2. The logic of getting binary number is simple: remainder is the key!
+3. The return statement tells us how to convert an integer array to a string.
