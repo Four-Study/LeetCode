@@ -493,3 +493,114 @@ There are several points to make:
 1. `int(a, 2)` can convert string `a` to a binary number directly
 2. The logic of getting binary number is simple: remainder is the key!
 3. The return statement tells us how to convert an integer array to a string.
+
+### Sqrt(x)
+
+Given a non-negative integer `x`, return *the square root of* `x` *rounded down to the nearest integer*. The returned integer should be **non-negative** as well.
+
+You **must not use** any built-in exponent function or operator.
+
+- For example, do not use `pow(x, 0.5)` in c++ or `x ** 0.5` in python.
+
+My answer succeeded, however, it is bad in terms of time.
+
+```python
+class Solution:
+    def mySqrt(self, x: int) -> int:
+        for i in range(x+1):
+            if i * i > x:
+                return i - 1
+        return x
+```
+
+So I copied the better answer online. 
+
+```python
+class Solution:
+    def mySqrt(self, x: int) -> int:
+        # if x == 0:
+        #     return 0
+        left, right = 1, x
+        while left <= right:
+            mid = (left + right) // 2
+            if mid * mid == x:
+                return mid
+            elif mid * mid < x:
+                left = mid + 1
+            else:
+                right = mid - 1
+        return right
+```
+
+Key point: Search in log(n) time order is always nice!
+
+### Climbing Stairs
+
+You are climbing a staircase. It takes `n` steps to reach the top.
+
+Each time you can either climb `1` or `2` steps. In how many distinct ways can you climb to the top?
+
+I first used recursive method to calculate it. I think this is right, but the time limit is exceeded. I actually prefer this answer. 
+
+```python
+class Solution:
+    def climbStairs(self, n: int) -> int:
+        if n == 1:
+            return 1
+        elif n == 2:
+            return 2
+        else:
+            return self.climbStairs(n-1) + self.climbStairs(n-2)
+```
+
+I utilized the `math` library in another solution. I like it less but it passed.
+
+```python
+import math
+class Solution:
+    def climbStairs(self, n: int) -> int:
+        a = n
+        b = 0
+        s = 0
+        while a >= 0:
+            s += math.comb(a + b, a)
+            a -= 2
+            b += 1
+        return s
+```
+
+### Remove Duplicates from Sorted List
+
+Given the `head` of a sorted linked list, *delete all duplicates such that each element appears only once*. Return *the linked list **sorted** as well*.
+
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+class Solution:
+    def deleteDuplicates(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        dummy = ListNode(-101)
+        pointer = dummy
+        while head:
+            if pointer.val != head.val:
+                pointer.next = head
+                pointer = pointer.next
+            else:
+                pointer.next = None
+            head = head.next
+        return dummy.next
+```
+
+I reviewed the code I did for sorted list last time to solve this problem. The note is useful. And I also make use of the debug function to help me improve. 
+
+It reminds me of one thing: assigning one node in sorted list is nothing like assigning one number in a list. The following nodes are also assigned since they are connected. 
+
+### Merge Sorted Array
+
+You are given two integer arrays `nums1` and `nums2`, sorted in **non-decreasing order**, and two integers `m` and `n`, representing the number of elements in `nums1` and `nums2` respectively.
+
+**Merge** `nums1` and `nums2` into a single array sorted in **non-decreasing order**.
+
+The final sorted array should not be returned by the function, but instead be *stored inside the array* `nums1`. To accommodate this, `nums1` has a length of `m + n`, where the first `m` elements denote the elements that should be merged, and the last `n` elements are set to `0` and should be ignored. `nums2` has a length of `n`.
