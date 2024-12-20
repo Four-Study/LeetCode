@@ -360,3 +360,311 @@ GROUP BY machine_id;
 ```
 
 Start thinking from the inner one and the larger one. 
+
+### Employee Bonus
+
+Table: `Employee`
+
+```
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| empId       | int     |
+| name        | varchar |
+| supervisor  | int     |
+| salary      | int     |
++-------------+---------+
+empId is the column with unique values for this table.
+Each row of this table indicates the name and the ID of an employee in addition to their salary and the id of their manager.
+```
+
+ 
+
+Table: `Bonus`
+
+```
++-------------+------+
+| Column Name | Type |
++-------------+------+
+| empId       | int  |
+| bonus       | int  |
++-------------+------+
+empId is the column of unique values for this table.
+empId is a foreign key (reference column) to empId from the Employee table.
+Each row of this table contains the id of an employee and their respective bonus.
+```
+
+ 
+
+Write a solution to report the name and bonus amount of each employee with a bonus **less than** `1000`.
+
+Return the result table in **any order**.
+
+```SQL
+SELECT Employee.name, Bonus.bonus 
+FROM Employee LEFT JOIN Bonus ON Employee.empID = Bonus.empID
+WHERE bonus is NULL OR bonus < 1000;
+```
+
+### Students and Examinations
+
+Table: `Students`
+
+```
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| student_id    | int     |
+| student_name  | varchar |
++---------------+---------+
+student_id is the primary key (column with unique values) for this table.
+Each row of this table contains the ID and the name of one student in the school.
+```
+
+ 
+
+Table: `Subjects`
+
+```
++--------------+---------+
+| Column Name  | Type    |
++--------------+---------+
+| subject_name | varchar |
++--------------+---------+
+subject_name is the primary key (column with unique values) for this table.
+Each row of this table contains the name of one subject in the school.
+```
+
+ 
+
+Table: `Examinations`
+
+```
++--------------+---------+
+| Column Name  | Type    |
++--------------+---------+
+| student_id   | int     |
+| subject_name | varchar |
++--------------+---------+
+There is no primary key (column with unique values) for this table. It may contain duplicates.
+Each student from the Students table takes every course from the Subjects table.
+Each row of this table indicates that a student with ID student_id attended the exam of subject_name.
+```
+
+ 
+
+Write a solution to find the number of times each student attended each exam.
+
+Return the result table ordered by `student_id` and `subject_name`.
+
+I did not solve this problem, so I copied from solutions
+
+```SQL
+SELECT 
+    S.student_id,
+    S.student_name,
+    SU.subject_name,
+    COUNT(E.student_id) attended_exams
+FROM 
+    Students S
+CROSS JOIN 
+    Subjects SU 
+LEFT JOIN 
+    Examinations E ON S.student_id=E.student_id AND SU.subject_name = E.subject_name
+GROUP BY S.student_id, S.student_name, SU.subject_name
+ORDER BY S.student_id, S.student_name, SU.subject_name
+;
+```
+
+Points to remember:
+
+1. `CROSS JOIN` can join tables without common fields. 
+2. Before using `COUNT`, make sure we understand the groups.
+
+### Managers with at Least 5 Direct Reports
+
+Table: `Employee`
+
+```
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| id          | int     |
+| name        | varchar |
+| department  | varchar |
+| managerId   | int     |
++-------------+---------+
+id is the primary key (column with unique values) for this table.
+Each row of this table indicates the name of an employee, their department, and the id of their manager.
+If managerId is null, then the employee does not have a manager.
+No employee will be the manager of themself.
+```
+
+ 
+
+Write a solution to find managers with at least **five direct reports**.
+
+Return the result table in **any order**.
+
+My answer:
+
+```SQL
+SELECT name 
+FROM Employee
+LEFT JOIN (
+    SELECT managerID, COUNT(*) direct_report
+    FROM Employee
+    GROUP BY managerID
+) AS temp
+ON Employee.id = temp.managerID
+WHERE direct_report >= 5 
+```
+
+More concise answer from solutions:
+
+```SQL
+SELECT e.name
+FROM Employee AS e 
+INNER JOIN Employee AS m ON e.id=m.managerId 
+GROUP BY m.managerId 
+HAVING COUNT(m.managerId) >= 5
+```
+
+### Confirmation Rate
+
+Table: `Signups`
+
+```
++----------------+----------+
+| Column Name    | Type     |
++----------------+----------+
+| user_id        | int      |
+| time_stamp     | datetime |
++----------------+----------+
+user_id is the column of unique values for this table.
+Each row contains information about the signup time for the user with ID user_id.
+```
+
+ 
+
+Table: `Confirmations`
+
+```
++----------------+----------+
+| Column Name    | Type     |
++----------------+----------+
+| user_id        | int      |
+| time_stamp     | datetime |
+| action         | ENUM     |
++----------------+----------+
+(user_id, time_stamp) is the primary key (combination of columns with unique values) for this table.
+user_id is a foreign key (reference column) to the Signups table.
+action is an ENUM (category) of the type ('confirmed', 'timeout')
+Each row of this table indicates that the user with ID user_id requested a confirmation message at time_stamp and that confirmation message was either confirmed ('confirmed') or expired without confirming ('timeout').
+```
+
+ 
+
+The **confirmation rate** of a user is the number of `'confirmed'` messages divided by the total number of requested confirmation messages. The confirmation rate of a user that did not request any confirmation messages is `0`. Round the confirmation rate to **two decimal** places.
+
+Write a solution to find the **confirmation rate** of each user.
+
+Return the result table in **any order**.
+
+I copied this answer from the solutions. The only thing I did not figure out is `round(avg(if(c.action="confirmed",1,0)),2)`.
+
+```SQL
+SELECT S.user_id, round(avg(if(c.action="confirmed",1,0)),2) confirmation_rate
+FROM Signups S
+LEFT JOIN Confirmations C
+ON S.user_id=C.user_id
+GROUP BY S.user_id;
+```
+
+Points:
+
+1. This `IF` function can create a column from the action column! This basically replaces the strings with integers
+2. The author cleverly converted the problem of calculating rates into calculating the average of 0's and 1's. 
+
+### Not Boring Movies
+
+Table: `Cinema`
+
+```
++----------------+----------+
+| Column Name    | Type     |
++----------------+----------+
+| id             | int      |
+| movie          | varchar  |
+| description    | varchar  |
+| rating         | float    |
++----------------+----------+
+id is the primary key (column with unique values) for this table.
+Each row contains information about the name of a movie, its genre, and its rating.
+rating is a 2 decimal places float in the range [0, 10]
+```
+
+ 
+
+Write a solution to report the movies with an odd-numbered ID and a description that is not `"boring"`.
+
+Return the result table ordered by `rating` **in descending order**.
+
+```SQL
+select *
+from Cinema
+where id % 2 != 0 and description != 'boring'
+order by rating desc;
+```
+
+### Average Selling Price
+
+Table: `Prices`
+
+```
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| product_id    | int     |
+| start_date    | date    |
+| end_date      | date    |
+| price         | int     |
++---------------+---------+
+(product_id, start_date, end_date) is the primary key (combination of columns with unique values) for this table.
+Each row of this table indicates the price of the product_id in the period from start_date to end_date.
+For each product_id there will be no two overlapping periods. That means there will be no two intersecting periods for the same product_id.
+```
+
+ 
+
+Table: `UnitsSold`
+
+```
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| product_id    | int     |
+| purchase_date | date    |
+| units         | int     |
++---------------+---------+
+This table may contain duplicate rows.
+Each row of this table indicates the date, units, and product_id of each product sold. 
+```
+
+ 
+
+Write a solution to find the average selling price for each product. `average_price` should be **rounded to 2 decimal places**. If a product does not have any sold units, its average selling price is assumed to be 0.
+
+Return the result table in **any order**.
+
+```SQL
+select product_id, ifnull(round(sum(price * units)/sum(units), 2), 0) average_price
+from (
+select p.product_id, p.price, u.units
+from Prices p
+left join UnitsSold u
+on p.product_id=u.product_id and p.start_date <= u.purchase_date and u.purchase_date <= p.end_date
+) as n
+group by product_id;
+```
+
