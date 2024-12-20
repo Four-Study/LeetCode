@@ -668,3 +668,178 @@ on p.product_id=u.product_id and p.start_date <= u.purchase_date and u.purchase_
 group by product_id;
 ```
 
+### Project Employees I
+
+Table: `Project`
+
+```
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| project_id  | int     |
+| employee_id | int     |
++-------------+---------+
+(project_id, employee_id) is the primary key of this table.
+employee_id is a foreign key to Employee table.
+Each row of this table indicates that the employee with employee_id is working on the project with project_id.
+```
+
+ 
+
+Table: `Employee`
+
+```
++------------------+---------+
+| Column Name      | Type    |
++------------------+---------+
+| employee_id      | int     |
+| name             | varchar |
+| experience_years | int     |
++------------------+---------+
+employee_id is the primary key of this table. It's guaranteed that experience_years is not NULL.
+Each row of this table contains information about one employee.
+```
+
+ 
+
+Write an SQL query that reports the **average** experience years of all the employees for each project, **rounded to 2 digits**.
+
+Return the result table in **any order**.
+
+```SQL
+select p.project_id, round(avg(experience_years), 2) as average_years
+from Project p
+left join Employee e
+on p.employee_id=e.employee_id
+group by p.project_id;
+```
+
+### Percentage of Users Attended a Contest
+
+Table: `Users`
+
+```
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| user_id     | int     |
+| user_name   | varchar |
++-------------+---------+
+user_id is the primary key (column with unique values) for this table.
+Each row of this table contains the name and the id of a user.
+```
+
+ 
+
+Table: `Register`
+
+```
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| contest_id  | int     |
+| user_id     | int     |
++-------------+---------+
+(contest_id, user_id) is the primary key (combination of columns with unique values) for this table.
+Each row of this table contains the id of a user and the contest they registered into.
+```
+
+ 
+
+Write a solution to find the percentage of the users registered in each contest rounded to **two decimals**.
+
+Return the result table ordered by `percentage` in **descending order**. In case of a tie, order it by `contest_id` in **ascending order**.
+
+```SQL
+select contest_id, round(count(*) * 100 / (
+    select count(*)
+    from Users
+), 2) as percentage
+from Register
+group by contest_id
+order by percentage desc, contest_id asc;
+```
+
+### Queries Quality and Percentage
+
+Table: `Queries`
+
+```
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| query_name  | varchar |
+| result      | varchar |
+| position    | int     |
+| rating      | int     |
++-------------+---------+
+This table may have duplicate rows.
+This table contains information collected from some queries on a database.
+The position column has a value from 1 to 500.
+The rating column has a value from 1 to 5. Query with rating less than 3 is a poor query.
+```
+
+ 
+
+We define query `quality` as:
+
+> The average of the ratio between query rating and its position.
+
+We also define `poor query percentage` as:
+
+> The percentage of all queries with rating less than 3.
+
+Write a solution to find each `query_name`, the `quality` and `poor_query_percentage`.
+
+Both `quality` and `poor_query_percentage` should be **rounded to 2 decimal places**.
+
+Return the result table in **any order**.
+
+```SQL
+select 
+    query_name,
+    round(avg(rating/position), 2) as quality,
+    round(avg(if(rating < 3, 1, 0))*100, 2) as poor_query_percentage
+from Queries
+group by query_name;
+```
+
+### Monthly Transactions I
+
+Table: `Transactions`
+
+```
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| id            | int     |
+| country       | varchar |
+| state         | enum    |
+| amount        | int     |
+| trans_date    | date    |
++---------------+---------+
+id is the primary key of this table.
+The table has information about incoming transactions.
+The state column is an enum of type ["approved", "declined"].
+```
+
+ 
+
+Write an SQL query to find for each month and country, the number of transactions and their total amount, the number of approved transactions and their total amount.
+
+Return the result table in **any order**.
+
+```sql
+select 
+    date_format(trans_date, '%Y-%m') as month,
+    country,
+    count(*) as trans_count,
+    sum(if(state='approved', 1, 0)) as approved_count,
+    sum(amount) as trans_total_amount,
+    sum(amount * if(state='approved', 1, 0)) as approved_total_amount 
+from Transactions 
+group by country, month;
+```
+
+I learned a new function here: `date_format(trans_date, '%Y-%m')` changed from the regular date to only year and month.
+
