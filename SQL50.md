@@ -843,3 +843,74 @@ group by country, month;
 
 I learned a new function here: `date_format(trans_date, '%Y-%m')` changed from the regular date to only year and month.
 
+### Immediate Food Delivery II
+
+Table: `Delivery`
+
+```
++-----------------------------+---------+
+| Column Name                 | Type    |
++-----------------------------+---------+
+| delivery_id                 | int     |
+| customer_id                 | int     |
+| order_date                  | date    |
+| customer_pref_delivery_date | date    |
++-----------------------------+---------+
+delivery_id is the column of unique values of this table.
+The table holds information about food delivery to customers that make orders at some date and specify a preferred delivery date (on the same order date or after it).
+```
+
+ 
+
+If the customer's preferred delivery date is the same as the order date, then the order is called **immediate;** otherwise, it is called **scheduled**.
+
+The **first order** of a customer is the order with the earliest order date that the customer made. It is guaranteed that a customer has precisely one first order.
+
+Write a solution to find the percentage of immediate orders in the first orders of all customers, **rounded to 2 decimal places**.
+
+```SQL
+select round(avg(order_date = customer_pref_delivery_date)*100, 2) as immediate_percentage 
+from Delivery
+where (customer_id, order_date) in (
+    select customer_id, min(order_date) # find the order date of the first order
+    from Delivery
+    group by customer_id
+);
+```
+
+Point: Remember where in statement (use with subquery)
+
+### Game Play Analysis IV
+
+Table: `Activity`
+
+```
++--------------+---------+
+| Column Name  | Type    |
++--------------+---------+
+| player_id    | int     |
+| device_id    | int     |
+| event_date   | date    |
+| games_played | int     |
++--------------+---------+
+(player_id, event_date) is the primary key (combination of columns with unique values) of this table.
+This table shows the activity of players of some games.
+Each row is a record of a player who logged in and played a number of games (possibly 0) before logging out on someday using some device.
+```
+
+ 
+
+Write a solution to report the **fraction** of players that logged in again on the day after the day they first logged in, **rounded to 2 decimal places**. In other words, you need to count the number of players that logged in for at least two consecutive days starting from their first login date, then divide that number by the total number of players.
+
+```SQL
+select round(count(distinct player_id) / (select count(distinct player_id) from Activity), 2) as fraction
+from Activity 
+where (player_id, event_date - interval 1 day) in (
+    select player_id, min(event_date) from Activity group by player_id # find the first login date
+);
+```
+
+Points:
+
+1. where in statement (use with subquery)
+2. The arithmetic with dates are different. 
