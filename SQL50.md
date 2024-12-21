@@ -914,3 +914,166 @@ Points:
 
 1. where in statement (use with subquery)
 2. The arithmetic with dates are different. 
+
+### Number of Unique Subjects Taught by Each Teacher
+
+Table: `Teacher`
+
+```
++-------------+------+
+| Column Name | Type |
++-------------+------+
+| teacher_id  | int  |
+| subject_id  | int  |
+| dept_id     | int  |
++-------------+------+
+(subject_id, dept_id) is the primary key (combinations of columns with unique values) of this table.
+Each row in this table indicates that the teacher with teacher_id teaches the subject subject_id in the department dept_id.
+```
+
+ 
+
+Write a solution to calculate the number of unique subjects each teacher teaches in the university.
+
+Return the result table in **any order**.
+
+```SQL
+select teacher_id, count(distinct subject_id) as cnt
+from Teacher
+group by teacher_id;
+```
+
+### User Activity for the Past 30 Days I
+
+Table: `Activity`
+
+```
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| user_id       | int     |
+| session_id    | int     |
+| activity_date | date    |
+| activity_type | enum    |
++---------------+---------+
+This table may have duplicate rows.
+The activity_type column is an ENUM (category) of type ('open_session', 'end_session', 'scroll_down', 'send_message').
+The table shows the user activities for a social media website. 
+Note that each session belongs to exactly one user.
+```
+
+ 
+
+Write a solution to find the daily active user count for a period of `30` days ending `2019-07-27` inclusively. A user was active on someday if they made at least one activity on that day.
+
+Return the result table in **any order**.
+
+```sql
+select activity_date as day, count(distinct user_id) as active_users
+from Activity
+where activity_date <= '2019-07-27' and activity_date >= '2019-07-27' - interval 29 day
+group by activity_date;
+```
+
+### Product Sales Analysis III
+
+Table: `Sales`
+
+```
++-------------+-------+
+| Column Name | Type  |
++-------------+-------+
+| sale_id     | int   |
+| product_id  | int   |
+| year        | int   |
+| quantity    | int   |
+| price       | int   |
++-------------+-------+
+(sale_id, year) is the primary key (combination of columns with unique values) of this table.
+product_id is a foreign key (reference column) to Product table.
+Each row of this table shows a sale on the product product_id in a certain year.
+Note that the price is per unit.
+```
+
+ 
+
+Table: `Product`
+
+```
++--------------+---------+
+| Column Name  | Type    |
++--------------+---------+
+| product_id   | int     |
+| product_name | varchar |
++--------------+---------+
+product_id is the primary key (column with unique values) of this table.
+Each row of this table indicates the product name of each product.
+```
+
+ 
+
+Write a solution to select the **product id**, **year**, **quantity**, and **price** for the **first year** of every product sold.
+
+Return the resulting table in **any order**.
+
+```sql
+select product_id, year as first_year, quantity, price
+from Sales
+where (product_id, year) in (
+    select product_id, min(year) as first_year
+    from Sales 
+    group by product_id
+);
+```
+
+### Classes More Than 5 Students
+
+Table: `Courses`
+
+```
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| student     | varchar |
+| class       | varchar |
++-------------+---------+
+(student, class) is the primary key (combination of columns with unique values) for this table.
+Each row of this table indicates the name of a student and the class in which they are enrolled.
+```
+
+ 
+
+Write a solution to find all the classes that have **at least five students**.
+
+Return the result table in **any order**.
+
+```sql
+select class 
+from (
+    select class, count(*) as cnt
+    from courses 
+    group by class
+) as temp
+where cnt >= 5;
+```
+
+The above is my answer, but I think it is necessary to learn the difference between `where` and `having`.
+
+```sql
+SELECT class
+FROM Courses
+GROUP BY class
+HAVING COUNT(student) >= 5;
+```
+
+| Feature                | `WHERE` Clause                                               | `HAVING` Clause                                              |
+| ---------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| **Purpose**            | Filters rows before grouping or aggregation.                 | Filters groups after grouping or aggregation.                |
+| **Applies To**         | Individual rows in the table.                                | Aggregated data or grouped results.                          |
+| **Use With**           | Non-aggregated conditions (columns, literals).               | Aggregated conditions (e.g., `SUM()`, `COUNT()`).            |
+| **Order of Execution** | Executed before the `GROUP BY` clause.                       | Executed after the `GROUP BY` clause.                        |
+| **Example**            | `SELECT department_id, salary FROM Employees WHERE salary > 50000;` | `SELECT department_id, SUM(salary) AS total_salary FROM Employees GROUP BY department_id HAVING total_salary > 200000;` |
+| **Main Difference**    | Filters data at the row level.                               | Filters data at the group level.                             |
+
+
+
