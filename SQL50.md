@@ -1075,5 +1075,141 @@ HAVING COUNT(student) >= 5;
 | **Example**            | `SELECT department_id, salary FROM Employees WHERE salary > 50000;` | `SELECT department_id, SUM(salary) AS total_salary FROM Employees GROUP BY department_id HAVING total_salary > 200000;` |
 | **Main Difference**    | Filters data at the row level.                               | Filters data at the group level.                             |
 
+### Find Followers Count
 
+```
+Followers
++-------------+------+
+| Column Name | Type |
++-------------+------+
+| user_id     | int  |
+| follower_id | int  |
++-------------+------+
+(user_id, follower_id) is the primary key (combination of columns with unique values) for this table.
+This table contains the IDs of a user and a follower in a social media app where the follower follows the user.
+```
 
+ 
+
+Write a solution that will, for each user, return the number of followers.
+
+Return the result table ordered by `user_id` in ascending order.
+
+```SQL
+select user_id, count(*) as followers_count
+from Followers
+group by user_id
+order by user_id;
+```
+
+### Biggest Single Number
+
+Table: `MyNumbers`
+
+```
++-------------+------+
+| Column Name | Type |
++-------------+------+
+| num         | int  |
++-------------+------+
+This table may contain duplicates (In other words, there is no primary key for this table in SQL).
+Each row of this table contains an integer.
+```
+
+ 
+
+A **single number** is a number that appeared only once in the `MyNumbers` table.
+
+Find the largest **single number**. If there is no **single number**, report `null`.
+
+```sql
+select max(num) as num from (
+    select num, count(*) as cnt
+    from MyNumbers
+    group by num
+    having cnt=1
+) as temp;
+```
+
+I learned how to use `having` clause in this question. Good job!
+
+### Customers Who Bought All Products
+
+Table: `Customer`
+
+```
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| customer_id | int     |
+| product_key | int     |
++-------------+---------+
+This table may contain duplicates rows. 
+customer_id is not NULL.
+product_key is a foreign key (reference column) to Product table.
+```
+
+ 
+
+Table: `Product`
+
+```
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| product_key | int     |
++-------------+---------+
+product_key is the primary key (column with unique values) for this table.
+```
+
+ 
+
+Write a solution to report the customer ids from the `Customer` table that bought all the products in the `Product` table.
+
+Return the result table in **any order**.
+
+```sql
+select customer_id
+from (
+    select customer_id, count(distinct product_key) as cnt
+    from Customer
+    group by customer_id
+) as temp
+where cnt=(select count(*) from Product);
+```
+
+### The Number of Employees Which Report to Each Employee
+
+Table: `Employees`
+
+```
++-------------+----------+
+| Column Name | Type     |
++-------------+----------+
+| employee_id | int      |
+| name        | varchar  |
+| reports_to  | int      |
+| age         | int      |
++-------------+----------+
+employee_id is the column with unique values for this table.
+This table contains information about the employees and the id of the manager they report to. Some employees do not report to anyone (reports_to is null). 
+```
+
+ 
+
+For this problem, we will consider a **manager** an employee who has at least 1 other employee reporting to them.
+
+Write a solution to report the ids and the names of all **managers**, the number of employees who report **directly** to them, and the average age of the reports rounded to the nearest integer.
+
+Return the result table ordered by `employee_id`.
+
+```sql
+select e1.employee_id, e1.name, count(e2.employee_id) as reports_count, round(avg(e2.age)) as average_age
+from Employees e1
+join Employees e2
+on e1.employee_id=e2.reports_to
+group by employee_id
+order by employee_id;
+```
+
+This question took me a long time. I did not want to use `join` to solve this. But it turns out to be more convenient in this way. 
