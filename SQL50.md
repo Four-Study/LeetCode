@@ -1,31 +1,3 @@
-### Recyclable and Low Fat Products
-
-Table: `Products`
-
-```
-+-------------+---------+
-| Column Name | Type    |
-+-------------+---------+
-| product_id  | int     |
-| low_fats    | enum    |
-| recyclable  | enum    |
-+-------------+---------+
-product_id is the primary key (column with unique values) for this table.
-low_fats is an ENUM (category) of type ('Y', 'N') where 'Y' means this product is low fat and 'N' means it is not.
-recyclable is an ENUM (category) of types ('Y', 'N') where 'Y' means this product is recyclable and 'N' means it is not.
-```
-
-Write a solution to find the ids of products that are both low fat and recyclable.
-
-Return the result table in **any order**.
-
-```SQL
-SELECT product_id FROM Products
-WHERE low_fats = 'Y' AND recyclable = 'Y'
-```
-
-
-
 ### Find Customer Referee
 
 Table: `Customer`
@@ -52,230 +24,6 @@ WHERE referee_id <> 2 OR referee_id is null
 ```
 
 Key point: In SQL, a comparison between a `null` value and any other value (including another `null`) using a comparison operator (eg `=`, `!=`, `<`, etc) will result in a `null`, which is considered as `false` for the purposes of a where clause (strictly speaking, it's "not true", rather than "false", but the effect is the same).
-
-### Big Countries
-
-Table: `World`
-
-```
-+-------------+---------+
-| Column Name | Type    |
-+-------------+---------+
-| name        | varchar |
-| continent   | varchar |
-| area        | int     |
-| population  | int     |
-| gdp         | bigint  |
-+-------------+---------+
-name is the primary key (column with unique values) for this table.
-Each row of this table gives information about the name of a country, the continent to which it belongs, its area, the population, and its GDP value.
-```
-
-A country is **big** if:
-
-- it has an area of at least three million (i.e., `3000000 km2`), or
-- it has a population of at least twenty-five million (i.e., `25000000`).
-
-Write a solution to find the name, population, and area of the **big countries**.
-
-Return the result table in **any order**.
-
-```SQL
-SELECT name, population, area FROM World
-WHERE area >= 3000000 OR population >= 25000000
-```
-
-### Article Views I
-
-Table: `Views`
-
-```
-+---------------+---------+
-| Column Name   | Type    |
-+---------------+---------+
-| article_id    | int     |
-| author_id     | int     |
-| viewer_id     | int     |
-| view_date     | date    |
-+---------------+---------+
-There is no primary key (column with unique values) for this table, the table may have duplicate rows.
-Each row of this table indicates that some viewer viewed an article (written by some author) on some date. 
-Note that equal author_id and viewer_id indicate the same person.
-```
-
-Write a solution to find all the authors that viewed at least one of their own articles.
-
-Return the result table sorted by `id` in ascending order.
-
-```SQL
-SELECT DISTINCT author_id as id FROM Views 
-WHERE author_id = viewer_id
-ORDER BY id
-```
-
-### Invalid Tweets
-
-Table: `Tweets`
-
-```
-+----------------+---------+
-| Column Name    | Type    |
-+----------------+---------+
-| tweet_id       | int     |
-| content        | varchar |
-+----------------+---------+
-tweet_id is the primary key (column with unique values) for this table.
-content consists of characters on an American Keyboard, and no other special characters.
-This table contains all the tweets in a social media app.
-```
-
- 
-
-Write a solution to find the IDs of the invalid tweets. The tweet is invalid if the number of characters used in the content of the tweet is **strictly greater** than `15`.
-
-Return the result table in **any order**.
-
-```SQL
-SELECT tweet_id FROM Tweets
-WHERE length(content) > 15
-```
-
-### Replace Employee ID With The Unique Identifier
-
-Table: `Employees`
-
-```
-+---------------+---------+
-| Column Name   | Type    |
-+---------------+---------+
-| id            | int     |
-| name          | varchar |
-+---------------+---------+
-id is the primary key (column with unique values) for this table.
-Each row of this table contains the id and the name of an employee in a company.
-```
-
- 
-
-Table: `EmployeeUNI`
-
-```
-+---------------+---------+
-| Column Name   | Type    |
-+---------------+---------+
-| id            | int     |
-| unique_id     | int     |
-+---------------+---------+
-(id, unique_id) is the primary key (combination of columns with unique values) for this table.
-Each row of this table contains the id and the corresponding unique id of an employee in the company.
-```
-
- 
-
-Write a solution to show the **unique ID** of each user, If a user does not have a unique ID replace just show `null`.
-
-Return the result table in **any** order.
-
-```SQL
-SELECT EmployeeUNI.unique_id, Employees.name
-FROM Employees 
-LEFT JOIN EmployeeUNI ON Employees.id=EmployeeUNI.id;
-```
-
-### Product Sales Analysis I
-
-Table: `Sales`
-
-```
-+-------------+-------+
-| Column Name | Type  |
-+-------------+-------+
-| sale_id     | int   |
-| product_id  | int   |
-| year        | int   |
-| quantity    | int   |
-| price       | int   |
-+-------------+-------+
-(sale_id, year) is the primary key (combination of columns with unique values) of this table.
-product_id is a foreign key (reference column) to Product table.
-Each row of this table shows a sale on the product product_id in a certain year.
-Note that the price is per unit.
-```
-
- 
-
-Table: `Product`
-
-```
-+--------------+---------+
-| Column Name  | Type    |
-+--------------+---------+
-| product_id   | int     |
-| product_name | varchar |
-+--------------+---------+
-product_id is the primary key (column with unique values) of this table.
-Each row of this table indicates the product name of each product.
-```
-
- 
-
-Write a solution to report the `product_name`, `year`, and `price` for each `sale_id` in the `Sales` table.
-
-Return the resulting table in **any order**.
-
-```SQL
-SELECT product_name, year, price 
-FROM Sales
-LEFT JOIN Product 
-ON Sales.product_id=Product.product_id
-```
-
-### Customer Who Visited but Did Not Make Any Transactions
-
-Table: `Visits`
-
-```
-+-------------+---------+
-| Column Name | Type    |
-+-------------+---------+
-| visit_id    | int     |
-| customer_id | int     |
-+-------------+---------+
-visit_id is the column with unique values for this table.
-This table contains information about the customers who visited the mall.
-```
-
- 
-
-Table: `Transactions`
-
-```
-+----------------+---------+
-| Column Name    | Type    |
-+----------------+---------+
-| transaction_id | int     |
-| visit_id       | int     |
-| amount         | int     |
-+----------------+---------+
-transaction_id is column with unique values for this table.
-This table contains information about the transactions made during the visit_id.
-```
-
- 
-
-Write a solution to find the IDs of the users who visited without making any transactions and the number of times they made these types of visits.
-
-Return the result table sorted in **any order**.
-
-```SQL
-SELECT customer_id, COUNT(*) AS count_no_trans
-FROM Visits
-WHERE visit_id NOT IN (
-    SELECT visit_id
-    FROM Transactions
-)
-GROUP BY customer_id;
-```
 
 ### Rising Temperature
 
@@ -360,51 +108,6 @@ GROUP BY machine_id;
 ```
 
 Start thinking from the inner one and the larger one. 
-
-### Employee Bonus
-
-Table: `Employee`
-
-```
-+-------------+---------+
-| Column Name | Type    |
-+-------------+---------+
-| empId       | int     |
-| name        | varchar |
-| supervisor  | int     |
-| salary      | int     |
-+-------------+---------+
-empId is the column with unique values for this table.
-Each row of this table indicates the name and the ID of an employee in addition to their salary and the id of their manager.
-```
-
- 
-
-Table: `Bonus`
-
-```
-+-------------+------+
-| Column Name | Type |
-+-------------+------+
-| empId       | int  |
-| bonus       | int  |
-+-------------+------+
-empId is the column of unique values for this table.
-empId is a foreign key (reference column) to empId from the Employee table.
-Each row of this table contains the id of an employee and their respective bonus.
-```
-
- 
-
-Write a solution to report the name and bonus amount of each employee with a bonus **less than** `1000`.
-
-Return the result table in **any order**.
-
-```SQL
-SELECT Employee.name, Bonus.bonus 
-FROM Employee LEFT JOIN Bonus ON Employee.empID = Bonus.empID
-WHERE bonus is NULL OR bonus < 1000;
-```
 
 ### Students and Examinations
 
@@ -668,52 +371,6 @@ on p.product_id=u.product_id and p.start_date <= u.purchase_date and u.purchase_
 group by product_id;
 ```
 
-### Project Employees I
-
-Table: `Project`
-
-```
-+-------------+---------+
-| Column Name | Type    |
-+-------------+---------+
-| project_id  | int     |
-| employee_id | int     |
-+-------------+---------+
-(project_id, employee_id) is the primary key of this table.
-employee_id is a foreign key to Employee table.
-Each row of this table indicates that the employee with employee_id is working on the project with project_id.
-```
-
- 
-
-Table: `Employee`
-
-```
-+------------------+---------+
-| Column Name      | Type    |
-+------------------+---------+
-| employee_id      | int     |
-| name             | varchar |
-| experience_years | int     |
-+------------------+---------+
-employee_id is the primary key of this table. It's guaranteed that experience_years is not NULL.
-Each row of this table contains information about one employee.
-```
-
- 
-
-Write an SQL query that reports the **average** experience years of all the employees for each project, **rounded to 2 digits**.
-
-Return the result table in **any order**.
-
-```SQL
-select p.project_id, round(avg(experience_years), 2) as average_years
-from Project p
-left join Employee e
-on p.employee_id=e.employee_id
-group by p.project_id;
-```
-
 ### Percentage of Users Attended a Contest
 
 Table: `Users`
@@ -915,34 +572,6 @@ Points:
 1. where in statement (use with subquery)
 2. The arithmetic with dates are different. 
 
-### Number of Unique Subjects Taught by Each Teacher
-
-Table: `Teacher`
-
-```
-+-------------+------+
-| Column Name | Type |
-+-------------+------+
-| teacher_id  | int  |
-| subject_id  | int  |
-| dept_id     | int  |
-+-------------+------+
-(subject_id, dept_id) is the primary key (combinations of columns with unique values) of this table.
-Each row in this table indicates that the teacher with teacher_id teaches the subject subject_id in the department dept_id.
-```
-
- 
-
-Write a solution to calculate the number of unique subjects each teacher teaches in the university.
-
-Return the result table in **any order**.
-
-```SQL
-select teacher_id, count(distinct subject_id) as cnt
-from Teacher
-group by teacher_id;
-```
-
 ### User Activity for the Past 30 Days I
 
 Table: `Activity`
@@ -1075,33 +704,6 @@ HAVING COUNT(student) >= 5;
 | **Example**            | `SELECT department_id, salary FROM Employees WHERE salary > 50000;` | `SELECT department_id, SUM(salary) AS total_salary FROM Employees GROUP BY department_id HAVING total_salary > 200000;` |
 | **Main Difference**    | Filters data at the row level.                               | Filters data at the group level.                             |
 
-### Find Followers Count
-
-```
-Followers
-+-------------+------+
-| Column Name | Type |
-+-------------+------+
-| user_id     | int  |
-| follower_id | int  |
-+-------------+------+
-(user_id, follower_id) is the primary key (combination of columns with unique values) for this table.
-This table contains the IDs of a user and a follower in a social media app where the follower follows the user.
-```
-
- 
-
-Write a solution that will, for each user, return the number of followers.
-
-Return the result table ordered by `user_id` in ascending order.
-
-```SQL
-select user_id, count(*) as followers_count
-from Followers
-group by user_id
-order by user_id;
-```
-
 ### Biggest Single Number
 
 Table: `MyNumbers`
@@ -1132,51 +734,6 @@ select max(num) as num from (
 ```
 
 I learned how to use `having` clause in this question. Good job!
-
-### Customers Who Bought All Products
-
-Table: `Customer`
-
-```
-+-------------+---------+
-| Column Name | Type    |
-+-------------+---------+
-| customer_id | int     |
-| product_key | int     |
-+-------------+---------+
-This table may contain duplicates rows. 
-customer_id is not NULL.
-product_key is a foreign key (reference column) to Product table.
-```
-
- 
-
-Table: `Product`
-
-```
-+-------------+---------+
-| Column Name | Type    |
-+-------------+---------+
-| product_key | int     |
-+-------------+---------+
-product_key is the primary key (column with unique values) for this table.
-```
-
- 
-
-Write a solution to report the customer ids from the `Customer` table that bought all the products in the `Product` table.
-
-Return the result table in **any order**.
-
-```sql
-select customer_id
-from (
-    select customer_id, count(distinct product_key) as cnt
-    from Customer
-    group by customer_id
-) as temp
-where cnt=(select count(*) from Product);
-```
 
 ### The Number of Employees Which Report to Each Employee
 
@@ -1213,3 +770,37 @@ order by employee_id;
 ```
 
 This question took me a long time. I did not want to use `join` to solve this. But it turns out to be more convenient in this way. 
+
+### Consecutive Numbers
+
+Table: `Logs`
+
+```
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| id          | int     |
+| num         | varchar |
++-------------+---------+
+In SQL, id is the primary key for this table.
+id is an autoincrement column starting from 1.
+```
+
+ 
+
+Find all numbers that appear at least three times consecutively.
+
+Return the result table in **any order**.
+
+*I didn't solve this question by myself.*
+
+```sql 
+SELECT DISTINCT l1.num AS ConsecutiveNums
+FROM Logs l1
+JOIN Logs l2 ON l1.id = l2.id - 1
+JOIN Logs l3 ON l1.id = l3.id - 2
+WHERE l1.num = l2.num AND l2.num = l3.num;
+```
+
+I joined once and didn't get the correct solution. It looks like we should join two times to solve.
+
