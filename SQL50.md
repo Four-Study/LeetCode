@@ -845,3 +845,171 @@ group by product_id
 having min(change_date) > '20190816'
 ```
 
+### Count Salary Categories
+
+Table: `Accounts`
+
+```
++-------------+------+
+| Column Name | Type |
++-------------+------+
+| account_id  | int  |
+| income      | int  |
++-------------+------+
+account_id is the primary key (column with unique values) for this table.
+Each row contains information about the monthly income for one bank account.
+```
+
+ 
+
+Write a solution to calculate the number of bank accounts for each salary category. The salary categories are:
+
+- `"Low Salary"`: All the salaries **strictly less** than `$20000`.
+- `"Average Salary"`: All the salaries in the **inclusive** range `[$20000, $50000]`.
+- `"High Salary"`: All the salaries **strictly greater** than `$50000`.
+
+The result table **must** contain all three categories. If there are no accounts in a category, return `0`.
+
+Return the result table in **any order**.
+
+*I could not solve this either.*
+
+```sql 
+select 'Low Salary' as Category, count(*) as accounts_count
+from Accounts
+where income < 20000
+union
+select 'Average Salary' as Category, count(*) as accounts_count
+from Accounts
+where income between 20000 and 50000
+union
+select 'High Salary' as Category, count(*) as accounts_count
+from Accounts
+where income > 50000
+```
+
+### Exchange Seats
+
+Table: `Seat`
+
+```
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| id          | int     |
+| student     | varchar |
++-------------+---------+
+id is the primary key (unique value) column for this table.
+Each row of this table indicates the name and the ID of a student.
+The ID sequence always starts from 1 and increments continuously.
+```
+
+ 
+
+Write a solution to swap the seat id of every two consecutive students. If the number of students is odd, the id of the last student is not swapped.
+
+Return the result table ordered by `id` **in ascending order**.
+
+```sql
+select row_number() OVER (ORDER BY swap_id) AS id, student
+from 
+(select 
+    case 
+    when id % 2 = 0 then id - 1
+    when id % 2 = 1 then id + 1
+    end
+    as swap_id, student
+from Seat
+order by swap_id) temp
+```
+
+Points:
+
+1. `row_number` can create a new id for me.
+2. `over` function needs to be summarized
+
+```sql
+<window_function>() OVER (    
+    [PARTITION BY column_name]    
+    [ORDER BY column_name ASC|DESC]    
+    [window_frame] 
+)
+```
+
+#### Components:
+
+1. **`<window_function>()`**:
+   - A function to perform the operation (e.g., `SUM()`, `AVG()`, `ROW_NUMBER()`, etc.).
+2. **`PARTITION BY`** *(optional)*:
+   - Divides the data into partitions (subgroups) for the calculation.
+   - If omitted, the function operates on the entire dataset.
+3. **`ORDER BY`** *(optional)*:
+   - Specifies the order of rows within each partition.
+   - Necessary for operations like cumulative totals or rankings.
+4. **`window_frame`** *(optional)*:
+   - Defines the range of rows included in the calculation relative to the current row.
+   - Common clauses:
+     - `ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW` (all rows up to the current row).
+     - `ROWS BETWEEN n PRECEDING AND CURRENT ROW` (a fixed number of rows preceding the current row).
+
+Common Window Functions:
+
+1. **Aggregate Functions**:
+   - `SUM()`, `AVG()`, `MAX()`, `MIN()`, `COUNT()`.
+2. **Ranking Functions**:
+   - `ROW_NUMBER()`: Assigns a unique row number to each row.
+   - `RANK()`: Assigns ranks with gaps for ties.
+   - `DENSE_RANK()`: Assigns ranks without gaps for ties.
+3. **Value Functions**:
+   - `FIRST_VALUE()`: Returns the first value in the window.
+   - `LAST_VALUE()`: Returns the last value in the window.
+   - `LAG()`, `LEAD()`: Access previous or next row values.
+
+
+
+
+
+### Restaurant Growth
+
+Table: `Customer`
+
+```
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| customer_id   | int     |
+| name          | varchar |
+| visited_on    | date    |
+| amount        | int     |
++---------------+---------+
+In SQL,(customer_id, visited_on) is the primary key for this table.
+This table contains data about customer transactions in a restaurant.
+visited_on is the date on which the customer with ID (customer_id) has visited the restaurant.
+amount is the total paid by a customer.
+```
+
+ 
+
+You are the restaurant owner and you want to analyze a possible expansion (there will be at least one customer every day).
+
+Compute the moving average of how much the customer paid in a seven days window (i.e., current day + 6 days before). `average_amount` should be **rounded to two decimal places**.
+
+Return the result table ordered by `visited_on` **in ascending order**.
+
+*Really hard. I don't know how to solve it.*
+
+```sql 
+SELECT visited_on, amount, ROUND(amount/7, 2) average_amount
+FROM (
+    SELECT DISTINCT visited_on, 
+    SUM(amount) OVER(ORDER BY visited_on RANGE BETWEEN INTERVAL 6 DAY   PRECEDING AND CURRENT ROW) amount, 
+    MIN(visited_on) OVER() 1st_date 
+    FROM Customer
+) t
+WHERE visited_on>= 1st_date+6;
+```
+
+Points:
+
+1. ` RANGE BETWEEN INTERVAL 6 DAY   PRECEDING AND CURRENT ROW` very hard to think of.
+2. empty `over()` would help 1 answer for each row. 
