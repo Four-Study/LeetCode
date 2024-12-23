@@ -804,3 +804,44 @@ WHERE l1.num = l2.num AND l2.num = l3.num;
 
 I joined once and didn't get the correct solution. It looks like we should join two times to solve.
 
+### Product Price at a Given Date
+
+Table: `Products`
+
+```
++---------------+---------+
+| Column Name   | Type    |
++---------------+---------+
+| product_id    | int     |
+| new_price     | int     |
+| change_date   | date    |
++---------------+---------+
+(product_id, change_date) is the primary key (combination of columns with unique values) of this table.
+Each row of this table indicates that the price of some product was changed to a new price at some date.
+```
+
+ 
+
+Write a solution to find the prices of all products on `2019-08-16`. Assume the price of all products before any change is `10`.
+
+Return the result table in **any order**.
+
+*This question is really hard for me. I could not solve it. Need to review for sure.*
+
+```sql
+select product_id, new_price as price
+from Products
+where (product_id, change_date) in 
+ (# find the most recent date before 2019-08-16 for each product id 
+select product_id, max(change_date)
+from Products
+where change_date <= '20190816'
+group by product_id
+) 
+union 
+select product_id, 10 as price # second part, all products whose date are all later than ...
+from Products
+group by product_id
+having min(change_date) > '20190816'
+```
+
