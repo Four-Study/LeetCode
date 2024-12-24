@@ -688,22 +688,6 @@ where cnt >= 5;
 
 The above is my answer, but I think it is necessary to learn the difference between `where` and `having`.
 
-```sql
-SELECT class
-FROM Courses
-GROUP BY class
-HAVING COUNT(student) >= 5;
-```
-
-| Feature                | `WHERE` Clause                                               | `HAVING` Clause                                              |
-| ---------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| **Purpose**            | Filters rows before grouping or aggregation.                 | Filters groups after grouping or aggregation.                |
-| **Applies To**         | Individual rows in the table.                                | Aggregated data or grouped results.                          |
-| **Use With**           | Non-aggregated conditions (columns, literals).               | Aggregated conditions (e.g., `SUM()`, `COUNT()`).            |
-| **Order of Execution** | Executed before the `GROUP BY` clause.                       | Executed after the `GROUP BY` clause.                        |
-| **Example**            | `SELECT department_id, salary FROM Employees WHERE salary > 50000;` | `SELECT department_id, SUM(salary) AS total_salary FROM Employees GROUP BY department_id HAVING total_salary > 200000;` |
-| **Main Difference**    | Filters data at the row level.                               | Filters data at the group level.                             |
-
 ### Biggest Single Number
 
 Table: `MyNumbers`
@@ -936,39 +920,6 @@ Points:
 )
 ```
 
-#### Components:
-
-1. **`<window_function>()`**:
-   - A function to perform the operation (e.g., `SUM()`, `AVG()`, `ROW_NUMBER()`, etc.).
-2. **`PARTITION BY`** *(optional)*:
-   - Divides the data into partitions (subgroups) for the calculation.
-   - If omitted, the function operates on the entire dataset.
-3. **`ORDER BY`** *(optional)*:
-   - Specifies the order of rows within each partition.
-   - Necessary for operations like cumulative totals or rankings.
-4. **`window_frame`** *(optional)*:
-   - Defines the range of rows included in the calculation relative to the current row.
-   - Common clauses:
-     - `ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW` (all rows up to the current row).
-     - `ROWS BETWEEN n PRECEDING AND CURRENT ROW` (a fixed number of rows preceding the current row).
-
-Common Window Functions:
-
-1. **Aggregate Functions**:
-   - `SUM()`, `AVG()`, `MAX()`, `MIN()`, `COUNT()`.
-2. **Ranking Functions**:
-   - `ROW_NUMBER()`: Assigns a unique row number to each row.
-   - `RANK()`: Assigns ranks with gaps for ties.
-   - `DENSE_RANK()`: Assigns ranks without gaps for ties.
-3. **Value Functions**:
-   - `FIRST_VALUE()`: Returns the first value in the window.
-   - `LAST_VALUE()`: Returns the last value in the window.
-   - `LAG()`, `LEAD()`: Access previous or next row values.
-
-
-
-
-
 ### Restaurant Growth
 
 Table: `Customer`
@@ -1013,3 +964,186 @@ Points:
 
 1. ` RANGE BETWEEN INTERVAL 6 DAY   PRECEDING AND CURRENT ROW` very hard to think of.
 2. empty `over()` would help 1 answer for each row. 
+
+### Department Top Three Salaries
+
+Table: `Employee`
+
+```
++--------------+---------+
+| Column Name  | Type    |
++--------------+---------+
+| id           | int     |
+| name         | varchar |
+| salary       | int     |
+| departmentId | int     |
++--------------+---------+
+id is the primary key (column with unique values) for this table.
+departmentId is a foreign key (reference column) of the ID from the Department table.
+Each row of this table indicates the ID, name, and salary of an employee. It also contains the ID of their department.
+```
+
+ 
+
+Table: `Department`
+
+```
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| id          | int     |
+| name        | varchar |
++-------------+---------+
+id is the primary key (column with unique values) for this table.
+Each row of this table indicates the ID of a department and its name.
+```
+
+ 
+
+A company's executives are interested in seeing who earns the most money in each of the company's departments. A **high earner** in a department is an employee who has a salary in the **top three unique** salaries for that department.
+
+Write a solution to find the employees who are **high earners** in each of the departments.
+
+Return the result table **in any order**.
+
+*This is the only **hard** question in this SQL50 list.*
+
+```sql
+with cte as (
+    select 
+        e.id, 
+        e.name, 
+        e.salary, 
+        d.name as d_name, 
+        dense_rank() over (partition by e.departmentid order by e.salary desc) as rnk
+    from employee e
+    join department d
+    on e.departmentid=d.id
+)
+select d_name as Department, name as Employee, Salary
+from cte
+where rnk <= 3;
+```
+
+Points:
+
+1. Learn to use `dense_rank()` function to find top 3 unique high earners
+2. `with` function is sometimes easier to read than subqueries.
+
+### Second Highest Salary
+
+Table: `Employee`
+
+```
++-------------+------+
+| Column Name | Type |
++-------------+------+
+| id          | int  |
+| salary      | int  |
++-------------+------+
+id is the primary key (column with unique values) for this table.
+Each row of this table contains information about the salary of an employee.
+```
+
+ 
+
+Write a solution to find the second highest **distinct** salary from the `Employee` table. If there is no second highest salary, return `null (return None in Pandas)`.
+
+```sql
+SELECT
+    (SELECT DISTINCT Salary
+    FROM Employee
+    ORDER BY Salary DESC
+    LIMIT 1 OFFSET 1) AS SecondHighestSalary
+```
+
+Points:
+
+1. `offset` to skip
+
+
+
+## The comparison between `where` and `having`
+
+
+
+```sql
+SELECT class
+FROM Courses
+GROUP BY class
+HAVING COUNT(student) >= 5;
+```
+
+| Feature                | `WHERE` Clause                                               | `HAVING` Clause                                              |
+| ---------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| **Purpose**            | Filters rows before grouping or aggregation.                 | Filters groups after grouping or aggregation.                |
+| **Applies To**         | Individual rows in the table.                                | Aggregated data or grouped results.                          |
+| **Use With**           | Non-aggregated conditions (columns, literals).               | Aggregated conditions (e.g., `SUM()`, `COUNT()`).            |
+| **Order of Execution** | Executed before the `GROUP BY` clause.                       | Executed after the `GROUP BY` clause.                        |
+| **Example**            | `SELECT department_id, salary FROM Employees WHERE salary > 50000;` | `SELECT department_id, SUM(salary) AS total_salary FROM Employees GROUP BY department_id HAVING total_salary > 200000;` |
+| **Main Difference**    | Filters data at the row level.                               | Filters data at the group level.                             |
+
+
+
+## How to use `over`?
+
+#### Components:
+
+1. **`<window_function>()`**:
+   - A function to perform the operation (e.g., `SUM()`, `AVG()`, `ROW_NUMBER()`, etc.).
+2. **`PARTITION BY`** *(optional)*:
+   - Divides the data into partitions (subgroups) for the calculation.
+   - If omitted, the function operates on the entire dataset.
+3. **`ORDER BY`** *(optional)*:
+   - Specifies the order of rows within each partition.
+   - Necessary for operations like cumulative totals or rankings.
+4. **`window_frame`** *(optional)*:
+   - Defines the range of rows included in the calculation relative to the current row.
+   - Common clauses:
+     - `ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW` (all rows up to the current row).
+     - `ROWS BETWEEN n PRECEDING AND CURRENT ROW` (a fixed number of rows preceding the current row).
+
+Common Window Functions:
+
+1. **Aggregate Functions**:
+   - `SUM()`, `AVG()`, `MAX()`, `MIN()`, `COUNT()`.
+2. **Ranking Functions**:
+   - `ROW_NUMBER()`: Assigns a unique row number to each row.
+   - `RANK()`: Assigns ranks with gaps for ties.
+   - `DENSE_RANK()`: Assigns ranks without gaps for ties.
+3. **Value Functions**:
+   - `FIRST_VALUE()`: Returns the first value in the window.
+   - `LAST_VALUE()`: Returns the last value in the window.
+   - `LAG()`, `LEAD()`: Access previous or next row values.
+
+
+
+## String and Regexp
+
+1. RegExp operations
+
+```sql
+WHERE column_name REGEXP '\\bword\\b' # match exact word
+WHERE column_name REGEXP '^word' # match at the start of a string
+WHERE column_name REGEXP 'word$' # match at the end of a string
+WHERE column_name REGEXP 'word' # match anywhere of a string
+WHERE column_name REGEXP '(^|\\s)word($|\\s)' # match a distinct word
+WHERE column_name REGEXP '[0-9]+' # match digits
+WHERE column_name REGEXP '^[a-zA-Z]+$' # match letters only
+WHERE column_name REGEXP '^[a-zA-Z0-9]+$' # Match Alphanumeric Characters
+WHERE column_name REGEXP '\\s' # Match Whitespace
+```
+
+2. Strings Operations
+
+```sql
+SELECT CONCAT(string1, string2) AS concatenated_string; # concatenate strings
+SELECT SUBSTRING(column_name, start_position, length) AS substring; # extract substring
+SELECT REPLACE(column_name, 'old_value', 'new_value') AS replaced_string; # replace subtring
+SELECT POSITION('substring' IN column_name) AS position; # find position of substring
+SELECT UPPER(column_name) AS uppercase_string, LOWER(column_name) AS lowercase_string; # convert to uppercase / lowercase
+SELECT TRIM(column_name) AS trimmed_string; # trim whitespace
+SELECT LPAD(column_name, total_length, 'pad_char') AS left_padded,
+       RPAD(column_name, total_length, 'pad_char') AS right_padded; # pad strings
+```
+
