@@ -1132,12 +1132,25 @@ WHERE column_name REGEXP '[0-9]+' # match digits
 WHERE column_name REGEXP '^[a-zA-Z]+$' # match letters only
 WHERE column_name REGEXP '^[a-zA-Z0-9]+$' # Match Alphanumeric Characters
 WHERE column_name REGEXP '\\s' # Match Whitespace
+
 ```
+
+| Character | Description                                 | Example | Matches                      |
+| --------- | ------------------------------------------- | ------- | ---------------------------- |
+| `.`       | Any single character (except newline)       | `a.b`   | `acb`, `a b`, `a$b`          |
+| `*`       | Zero or more of the preceding               | `ab*`   | `a`, `ab`, `abb`, `abbb`     |
+| `?`       | Zero or one of the preceding                | `ab?`   | `a`, `ab`                    |
+| `+`       | One or more of the preceding                | `ab+`   | `ab`, `abb`, `abbb`          |
+| `.*`      | Matches **as much as possible** (greedy)    | `ab.*`  | `abc123abc` from `abc123abc` |
+| `.*?`     | Matches **as little as possible**  (greedy) | `ab.*?` | `abc` from `abc123abc`       |
 
 2. Strings Operations
 
 ```sql
 SELECT CONCAT(string1, string2) AS concatenated_string; # concatenate strings
+SELECT group_column, GROUP_CONCAT(value_column ORDER BY value_column SEPARATOR ', ') AS concatenated_values
+FROM your_table
+GROUP BY group_column; # concatenate strings by group
 SELECT SUBSTRING(column_name, start_position, length) AS substring; # extract substring
 SELECT REPLACE(column_name, 'old_value', 'new_value') AS replaced_string; # replace subtring
 SELECT POSITION('substring' IN column_name) AS position; # find position of substring
