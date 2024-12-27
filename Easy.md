@@ -732,3 +732,30 @@ class Solution:
 
 Key point: think about recursive approaches when dealing with tree problems.
 
+### Diameter of Binary Tree
+
+Given the `root` of a binary tree, return *the length of the **diameter** of the tree*.
+
+The **diameter** of a binary tree is the **length** of the longest path between any two nodes in a tree. This path may or may not pass through the `root`.
+
+The **length** of a path between two nodes is represented by the number of edges between them.
+
+```python
+class Solution:
+    def diameterOfBinaryTree(self, root: TreeNode) -> int:
+        self.max_diameter = 0
+
+        def height(node):
+            if not node:
+                return 0
+            left = height(node.left)
+            right = height(node.right)
+            self.max_diameter = max(self.max_diameter, left + right)
+            return max(left, right) + 1
+
+        height(root)
+        return self.max_diameter
+```
+
+This problem is an easy problem, but I couldn't solve it. The diameter can be converted to the height problem. The diameter of a tree is the sum of left height and right height. 
+
