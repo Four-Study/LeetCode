@@ -273,3 +273,74 @@ def postorder(root):
 - Pre-order: root first
 - Post-order: root last
 
+## Strings
+
+- `str()`: Converts an object to a string.
+  str(123)  # '123'
+
+- `len()`: Returns the length of the string.
+  len("hello")  # 5
+
+- `startswith()`: Checks if the string starts with a specified prefix.
+  "hello".startswith("he")  # True
+
+- `endswith()`: Checks if the string ends with a specified suffix.
+  "hello".endswith("lo")  # True
+
+- `isalnum()`: Returns `True` if all characters are alphanumeric.
+  "hello123".isalnum()  # True
+
+- `isalpha()`: Returns `True` if all characters are alphabetic.
+  "hello".isalpha()  # True
+
+- `isdigit()`: Returns `True` if all characters are digits.
+  "123".isdigit()  # True
+
+- `islower()`: Checks if all characters are lowercase.
+  "hello".islower()  # True
+
+- `isupper()`: Checks if all characters are uppercase.
+  "HELLO".isupper()  # True
+
+- `isspace()`: Checks if all characters are whitespace.
+  "   ".isspace()  # True
+
+- `lower()`: Converts all characters to lowercase.
+  "HELLO".lower()  # 'hello'
+
+- `upper()`: Converts all characters to uppercase.
+  "hello".upper()  # 'HELLO'
+
+- `strip()`: Removes leading and trailing whitespace.
+  "  hello  ".strip()  # 'hello'
+
+- `lstrip()`: Removes leading whitespace.
+  "  hello".lstrip()  # 'hello'
+
+- `rstrip()`: Removes trailing whitespace.
+  "hello  ".rstrip()  # 'hello'
+
+- `replace()`: Replaces occurrences of a substring with another substring.
+  "hello world".replace("world", "Python")  # 'hello Python'
+
+- `join()`: Joins elements of an iterable into a single string.
+  ",".join(["a", "b", "c"])  # 'a,b,c'
+
+- `split()`: Splits the string into a list of substrings.
+  "hello world".split()  # ['hello', 'world']
+
+- `splitlines()`: Splits the string at line breaks.
+  "hello\nworld".splitlines()  # ['hello', 'world']
+
+- `partition()`: Splits the string into three parts: before, separator, after.
+  "hello world".partition(" ")  # ('hello', ' ', 'world')
+
+- `zfill()`: Pads the string with zeros to make it a certain length.
+  "42".zfill(5)  # '00042'
+
+- `format()`: Formats strings using placeholders.
+  "Hello, {}".format("World")  # 'Hello, World'
+
+- `f-strings`: Embeds expressions inside string literals (Python 3.6+).
+  name = "World"
+  f"Hello, {name}"
