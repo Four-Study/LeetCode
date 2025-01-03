@@ -302,6 +302,34 @@ class Solution:
         return j
 ```
 
+### Remove Duplicates from Sorted Array II
+
+Given an integer array `nums` sorted in **non-decreasing order**, remove some duplicates [**in-place**](https://en.wikipedia.org/wiki/In-place_algorithm) such that each unique element appears **at most twice**. The **relative order** of the elements should be kept the **same**.
+
+Since it is impossible to change the length of the array in some languages, you must instead have the result be placed in the **first part** of the array `nums`. More formally, if there are `k` elements after removing the duplicates, then the first `k` elements of `nums` should hold the final result. It does not matter what you leave beyond the first `k` elements.
+
+Return `k` *after placing the final result in the first* `k` *slots of* `nums`.
+
+Do **not** allocate extra space for another array. You must do this by **modifying the input array [in-place](https://en.wikipedia.org/wiki/In-place_algorithm)** with O(1) extra memory.
+
+```sql
+class Solution:
+    def removeDuplicates(self, nums: List[int]) -> int:
+        count = {}
+        k = 0
+        for num in nums:
+            count[num] = count.get(num, 0) + 1
+            if count[num] <= 2:
+                nums[k] = num
+                k += 1
+            
+        return k
+```
+
+In this kind of remove duplicates problem, do not worry about messing up with the array. It will work as long as it traverse each element. 
+
+
+
 ### Remove Element
 
 Given an integer array `nums` and an integer `val`, remove all occurrences of `val` in `nums` [**in-place**](https://en.wikipedia.org/wiki/In-place_algorithm). The order of the elements may be changed. Then return *the number of elements in* `nums` *which are not equal to* `val`.
