@@ -2,4 +2,4 @@
 
 This directory contains solutions and comments of problems.
 
-And problems are classified into three difficulty levels: **Easy**, **Medium**, and **Hard**. 
+And problems are classified into different categories. 
