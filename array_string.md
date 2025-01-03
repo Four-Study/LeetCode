@@ -53,39 +53,85 @@ class Solution:
             seen[value] = i  #5
 ```
 
-### Palindrome Number
+### 3 Sum
 
-Given an integer `x`, return `true` *if* `x` *is a* ***palindrome***, *and* `false` *otherwise*.
+Given an integer array nums, return all the triplets `[nums[i], nums[j], nums[k]]` such that `i != j`, `i != k`, and `j != k`, and `nums[i] + nums[j] + nums[k] == 0`.
 
-My naive solution: 
+Notice that the solution set must not contain duplicate triplets.
+
+When I was doing this problem, I know I have to use two layers of loops. However, I cannot think more.
+
+I got an example: [-2, -1, 0, 0, 1, 2], which is very helpful for the understanding of this problem
 
 ```python
-class Solution(object):
-    def isPalindrome(self, x):
-        """
-        :type x: int
-        :rtype: bool
-        """
-        # Convert the number to string
-        x_str = str(x)
-        # Check if the string is equal to its reverse
-        return x_str == x_str[::-1]
+class Solution:
+    def threeSum(self, nums):
+        # res stands for results, used to contain all the 
+        # triplets that satisfy the conditions
+        res = []
+        # sort the nums array for easier operation
+        nums.sort()
+        for i in range(len(nums)-2):
+            if i > 0 and nums[i] == nums[i-1]:
+                continue
+            l, r = i+1, len(nums)-1
+            while l < r:
+                s = nums[i] + nums[l] + nums[r]
+                if s < 0:
+                    l +=1 
+                elif s > 0:
+                    r -= 1
+                else:
+                    res.append((nums[i], nums[l], nums[r]))
+                    while l < r and nums[l] == nums[l+1]:
+                        l += 1
+                    while l < r and nums[r] == nums[r-1]:
+                        r -= 1
+                    l += 1; r -= 1
+        return res
 ```
 
-Good one:
+#### 4Sum
+
+Given an array `nums` of `n` integers, return *an array of all the **unique** quadruplets* `[nums[a], nums[b], nums[c], nums[d]]` such that:
+
+- `0 <= a, b, c, d < n`
+- `a`, `b`, `c`, and `d` are **distinct**.
+- `nums[a] + nums[b] + nums[c] + nums[d] == target`
+
+You may return the answer in **any order**.
+
+I like this solution because it makes use of three sums.
 
 ```python
-class Solution(object):
-    def isPalindrome(self, x: int) -> bool:
-        if x < 0:
-            return False
+class Solution:
+    def threeSum(self, nums, target):
+        res = []
+        for i in range(len(nums)-2):
+            if i > 0 and nums[i] == nums[i-1]: continue
+            j, k = i+1, len(nums)-1
+            while j < k:
+                total = nums[i] + nums[j] + nums[k]
+                if total == target:
+                    res.append([nums[i], nums[j], nums[k]])
+                    while j < k and nums[j] == nums[j+1]: j += 1
+                    while j < k and nums[k] == nums[k-1]: k -= 1
+                    j += 1
+                    k -= 1
+                elif total < target:
+                    j += 1
+                else:
+                    k -= 1
+        return res
 
-        inputNum = x
-        newNum = 0
-        while x > 0:
-            newNum = newNum * 10 + x % 10 # This line extracts the last digit of x and add it to newNum. For example, if x is 123, then newNum is 3
-            x = x//10 # This line removes the last digit from x by performing integer division by 10. For example, if x is 123, then after x//10, x becomes 12. 
-        return newNum == inputNum
+    def fourSum(self, nums: List[int], target: int) -> List[List[int]]:
+        nums.sort()
+        res = []
+        for i in range(len(nums)-3):
+            if i > 0 and nums[i] == nums[i-1]: continue
+            rest = self.threeSum(nums[i+1:], target-nums[i])
+            res += [[nums[i]]+r for r in rest]
+        return res
 ```
 
 ### Roman to Integer
@@ -199,53 +245,6 @@ class Solution:
 ```
 
 1. When we want to loop over the elements in a string, we do not need to do list(string) every time. `for char in string` also works.
-
-### Merge Two Sorted Lists
-
-You are given the heads of two sorted linked lists `list1` and `list2`.
-
-Merge the two lists into one **sorted** list. The list should be made by splicing together the nodes of the first two lists.
-
-Return *the head of the merged linked list*.
-
-This question is super hard for me because I am not familiar with linked list. I did not work it out, so I just copied the answer online:
-
-```python
-# Definition for singly-linked list.
-class ListNode:
-    def __init__(self, val=0, next=None):
-        self.val = val
-        self.next = next
-class Solution:
-    def mergeTwoLists(self, list1: Optional[ListNode], list2: Optional[ListNode]) -> Optional[ListNode]:
-        dummy = ListNode()
-        pointer = dummy
-        while list1 and list2:
-            if list1.val <= list2.val:
-                pointer.next = list1
-                list1 = list1.next
-            else:
-                pointer.next = list2
-                list2 = list2.next
-            pointer = pointer.next
-        if list1:
-            pointer.next = list1
-        else:
-            pointer.next = list2
-        return dummy.next
-```
-
-There are several things I can summarize:
-
-1. `None` can be used in condition statement directly!
-2. There is a difference between `&`  and `and`!
-
-| Aspect               | `&`                                            | `and`               |
-| -------------------- | ---------------------------------------------- | ------------------- |
-| **Type**             | Bitwise operator                               | Logical operator    |
-| **Operands**         | Works with integers, Booleans, or NumPy arrays | Works with any type |
-| **Short-circuiting** | No                                             | Yes                 |
-| **Result**           | A computed value (bitwise or element-wise)     | One of the operands |
 
 ### Remove Duplicates from Sorted Array
 
@@ -368,32 +367,6 @@ I was thinking about using two loops to check one by one, that was stupid.
 
 This solution can work because you can actually slice string as if it is an array!
 
-### Search Insert Position
-
-Given a sorted array of distinct integers and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order.
-
-You must write an algorithm with `O(log n)` runtime complexity.
-
-I solved this problem with some help from ChatGPT:
-
-```python
-class Solution:
-    def searchInsert(self, nums: List[int], target: int) -> int:
-        n = len(nums)
-        if nums[n-1] < target:
-            return n
-        elif nums[0] > target:
-            return 0
-        elif nums[n // 2] == target:
-            return n // 2
-        elif nums[n // 2] > target:
-            return self.searchInsert(nums[:(n//2)], target)
-        else:
-            return n // 2 + self.searchInsert(nums[(n//2):], target)
-```
-
-Keypoint: **`self` keyword**: It ensures that the `searchInsert` method is called as part of the current instance of the `Solution` class.
-
 ### Length of Last Word
 
 Given a string `s` consisting of words and spaces, return *the length of the **last** word in the string.*
@@ -450,153 +423,6 @@ class Solution:
                 return [1] + digits
 ```
 
-### Add Binary
-
-Given two binary strings `a` and `b`, return *their sum as a binary string*.
-
-
-
-**Example 1:**
-
-```
-Input: a = "11", b = "1"
-Output: "100"
-```
-
-**Example 2:**
-
-```
-Input: a = "1010", b = "1011"
-Output: "10101"
-```
-
-I spent some time on this question because I think handling binary numbers is very important in programming.
-
-```python
-class Solution:
-  def addBinary(self, a: str, b: str) -> str:
-    summ = int(a, 2) + int(b, 2)
-
-    s = []
-    q = summ // 2
-    r = summ % 2
-    s.append(remainder)
-    while q != 0:
-        r = q % 2
-        q = q // 2
-        s.append(r)
-    return ''.join(map(str, s[::-1]))
-```
-
-There are several points to make:
-
-1. `int(a, 2)` can convert string `a` to a binary number directly
-2. The logic of getting binary number is simple: remainder is the key!
-3. The return statement tells us how to convert an integer array to a string.
-
-### Sqrt(x)
-
-Given a non-negative integer `x`, return *the square root of* `x` *rounded down to the nearest integer*. The returned integer should be **non-negative** as well.
-
-You **must not use** any built-in exponent function or operator.
-
-- For example, do not use `pow(x, 0.5)` in c++ or `x ** 0.5` in python.
-
-My answer succeeded, however, it is bad in terms of time.
-
-```python
-class Solution:
-    def mySqrt(self, x: int) -> int:
-        for i in range(x+1):
-            if i * i > x:
-                return i - 1
-        return x
-```
-
-So I copied the better answer online. 
-
-```python
-class Solution:
-    def mySqrt(self, x: int) -> int:
-        # if x == 0:
-        #     return 0
-        left, right = 1, x
-        while left <= right:
-            mid = (left + right) // 2
-            if mid * mid == x:
-                return mid
-            elif mid * mid < x:
-                left = mid + 1
-            else:
-                right = mid - 1
-        return right
-```
-
-Key point: Search in log(n) time order is always nice!
-
-### Climbing Stairs
-
-You are climbing a staircase. It takes `n` steps to reach the top.
-
-Each time you can either climb `1` or `2` steps. In how many distinct ways can you climb to the top?
-
-I first used recursive method to calculate it. I think this is right, but the time limit is exceeded. I actually prefer this answer. 
-
-```python
-class Solution:
-    def climbStairs(self, n: int) -> int:
-        if n == 1:
-            return 1
-        elif n == 2:
-            return 2
-        else:
-            return self.climbStairs(n-1) + self.climbStairs(n-2)
-```
-
-I utilized the `math` library in another solution. I like it less but it passed.
-
-```python
-import math
-class Solution:
-    def climbStairs(self, n: int) -> int:
-        a = n
-        b = 0
-        s = 0
-        while a >= 0:
-            s += math.comb(a + b, a)
-            a -= 2
-            b += 1
-        return s
-```
-
-### Remove Duplicates from Sorted List
-
-Given the `head` of a sorted linked list, *delete all duplicates such that each element appears only once*. Return *the linked list **sorted** as well*.
-
-```python
-# Definition for singly-linked list.
-# class ListNode:
-#     def __init__(self, val=0, next=None):
-#         self.val = val
-#         self.next = next
-class Solution:
-    def deleteDuplicates(self, head: Optional[ListNode]) -> Optional[ListNode]:
-        dummy = ListNode(-101)
-        pointer = dummy
-        while head:
-            if pointer.val != head.val:
-                pointer.next = head
-                pointer = pointer.next
-            else:
-                pointer.next = None
-            head = head.next
-        return dummy.next
-```
-
-I reviewed the code I did for sorted list last time to solve this problem. The note is useful. And I also make use of the debug function to help me improve. 
-
-It reminds me of one thing: assigning one node in sorted list is nothing like assigning one number in a list. The following nodes are also assigned since they are connected. 
-
 ### Merge Sorted Array
 
 You are given two integer arrays `nums1` and `nums2`, sorted in **non-decreasing order**, and two integers `m` and `n`, representing the number of elements in `nums1` and `nums2` respectively.
@@ -628,134 +454,103 @@ class Solution:
 
 I did not come up with this answer, and it took me long to understand it. The checks of `midx` and `nidx` are not only for the two purposes I put there. They are also the guarantees for running the program. 
 
-### Binary Tree Inorder Traversal
+### Longest Substring Without Repeating Characters
 
-Given the `root` of a binary tree, return *the inorder traversal of its nodes' values*.
+Given a string `s`, find the length of the **longest** **substring** without repeating characters.
 
-This is really hard for me. I copied the solution online, and also the solution path. 
+**Example 1:**
+
+```
+Input: s = "abcabcbb"
+Output: 3
+Explanation: The answer is "abc", with the length of 3.
+```
 
 ```python
 class Solution:
-    def inorderTraversal(self, root: Optional[TreeNode]) -> List[int]:
-        res = []
-        stack = []
-        
-        while root or stack:
-            while root:
-                stack.append(root)
-                root = root.left
-
-            root = stack.pop()
-            res.append(root.val)
-            root = root.right
-        
-        return res
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        left = max_length = 0
+        char_set = set()
+        for right in range(len(s)):
+            while s[right] in char_set:
+                char_set.remove(s[left])
+                left += 1
+            
+            char_set.add(s[right])
+            max_length = max(max_length, right - left + 1)
+        return max_length
 ```
 
-I prefer to do it in a recursive way though
+Point: As long as there is a repeating character, this string is done. 
 
-```python
-class Solution:
-    def inorderTraversal(self, root: Optional[TreeNode]) -> List[int]:
-        def inorder(node, res):
-            if not node:
-                return
-            inorder(node.left, res)  # Traverse the left subtree
-            res.append(node.val)    # Visit the root
-            inorder(node.right, res)  # Traverse the right subtree
+## String Operations
 
-        result = []
-        inorder(root, result)
-        return result
-```
+- `str()`: Converts an object to a string.
+  str(123)  # '123'
 
-### Same Tree
+- `len()`: Returns the length of the string.
+  len("hello")  # 5
 
-Given the roots of two binary trees `p` and `q`, write a function to check if they are the same or not.
+- `startswith()`: Checks if the string starts with a specified prefix.
+  "hello".startswith("he")  # True
 
-Two binary trees are considered the same if they are structurally identical, and the nodes have the same value.
+- `endswith()`: Checks if the string ends with a specified suffix.
+  "hello".endswith("lo")  # True
 
-```python
-class Solution:
-    def isSameTree(self, p: Optional[TreeNode], q: Optional[TreeNode]) -> bool:
-        if not p and not q:
-            return True # both None
-        elif not p or not q:
-            return False # One is None and the other is not
-        elif p.val != q.val:
-            return False
-        else: 
-            return self.isSameTree(p.left, q.left) and self.isSameTree(p.right, q.right)
-```
+- `isalnum()`: Returns `True` if all characters are alphanumeric.
+  "hello123".isalnum()  # True
 
-### Symmetric Tree
+- `isalpha()`: Returns `True` if all characters are alphabetic.
+  "hello".isalpha()  # True
 
-Given the `root` of a binary tree, *check whether it is a mirror of itself* (i.e., symmetric around its center).
+- `isdigit()`: Returns `True` if all characters are digits.
+  "123".isdigit()  # True
 
-This question can be solved recursively
+- `islower()`: Checks if all characters are lowercase.
+  "hello".islower()  # True
 
-```python
-class Solution:
-    def isSymmetric(self, root: Optional[TreeNode]) -> bool:
-        
-        def is_mirror(n1, n2): # n1:left, n2:right
-            if not n1 and not n2:
-                return True
-            if not n1 or not n2:
-                return False
-            return n1.val == n2.val and is_mirror(n1.left, n2.right) and is_mirror(n1.right, n2.left)
-        
-        return is_mirror(root.left, root.right)
-```
+- `isupper()`: Checks if all characters are uppercase.
+  "HELLO".isupper()  # True
 
-### Maximum Depth of Binary Tree
+- `isspace()`: Checks if all characters are whitespace.
+  "   ".isspace()  # True
 
-Given the `root` of a binary tree, return *its maximum depth*.
+- `lower()`: Converts all characters to lowercase.
+  "HELLO".lower()  # 'hello'
 
-A binary tree's **maximum depth** is the number of nodes along the longest path from the root node down to the farthest leaf node.
+- `upper()`: Converts all characters to uppercase.
+  "hello".upper()  # 'HELLO'
 
-```python
-# Definition for a binary tree node.
-# class TreeNode:
-#     def __init__(self, val=0, left=None, right=None):
-#         self.val = val
-#         self.left = left
-#         self.right = right
-class Solution:
-    def maxDepth(self, root: Optional[TreeNode]) -> int:
-        if not root: # root is None
-            return 0
-        a = self.maxDepth(root.left)
-        b = self.maxDepth(root.right)
-        return 1 + max(a,b)
-```
+- `strip()`: Removes leading and trailing whitespace.
+  "  hello  ".strip()  # 'hello'
 
-Key point: think about recursive approaches when dealing with tree problems.
+- `lstrip()`: Removes leading whitespace.
+  "  hello".lstrip()  # 'hello'
 
-### Diameter of Binary Tree
+- `rstrip()`: Removes trailing whitespace.
+  "hello  ".rstrip()  # 'hello'
 
-Given the `root` of a binary tree, return *the length of the **diameter** of the tree*.
+- `replace()`: Replaces occurrences of a substring with another substring.
+  "hello world".replace("world", "Python")  # 'hello Python'
 
-The **diameter** of a binary tree is the **length** of the longest path between any two nodes in a tree. This path may or may not pass through the `root`.
+- `join()`: Joins elements of an iterable into a single string.
+  ",".join(["a", "b", "c"])  # 'a,b,c'
 
-The **length** of a path between two nodes is represented by the number of edges between them.
+- `split()`: Splits the string into a list of substrings.
+  "hello world".split()  # ['hello', 'world']
 
-```python
-class Solution:
-    def diameterOfBinaryTree(self, root: TreeNode) -> int:
-        self.max_diameter = 0
+- `splitlines()`: Splits the string at line breaks.
+  "hello\nworld".splitlines()  # ['hello', 'world']
 
-        def height(node):
-            if not node:
-                return 0
-            left = height(node.left)
-            right = height(node.right)
-            self.max_diameter = max(self.max_diameter, left + right)
-            return max(left, right) + 1
+- `partition()`: Splits the string into three parts: before, separator, after.
+  "hello world".partition(" ")  # ('hello', ' ', 'world')
 
-        height(root)
-        return self.max_diameter
-```
+- `zfill()`: Pads the string with zeros to make it a certain length.
+  "42".zfill(5)  # '00042'
 
-This problem is an easy problem, but I couldn't solve it. The diameter can be converted to the height problem. The diameter of a tree is the sum of left height and right height. 
+- `format()`: Formats strings using placeholders.
+  "Hello, {}".format("World")  # 'Hello, World'
 
+- `f-strings`: Embeds expressions inside string literals (Python 3.6+).
+  name = "World"
+  f"Hello, {name}"
