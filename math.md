@@ -108,3 +108,26 @@ class Solution:
 ```
 
 Key point: Search in log(n) time order is always nice!
+
+### Number of 1 Bits
+
+Given a positive integer `n`, write a function that returns the number of set bits in its binary representation (also known as the [Hamming weight](http://en.wikipedia.org/wiki/Hamming_weight)).
+
+Remember this problem for the binary representation.
+
+```python
+class Solution:
+    def hammingWeight(self, n: int) -> int:
+        
+        remainder = n
+        divisor = 2
+        count = 0
+        while remainder > 0:
+            m = remainder % divisor 
+            if m != 0:
+                count += 1
+            remainder = remainder - m
+            divisor = divisor * 2
+        return count
+```
+

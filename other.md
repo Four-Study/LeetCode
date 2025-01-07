@@ -1,29 +1,3 @@
-### Search Insert Position (Binary Search)
-
-Given a sorted array of distinct integers and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order.
-
-You must write an algorithm with `O(log n)` runtime complexity.
-
-I solved this problem with some help from ChatGPT:
-
-```python
-class Solution:
-    def searchInsert(self, nums: List[int], target: int) -> int:
-        n = len(nums)
-        if nums[n-1] < target:
-            return n
-        elif nums[0] > target:
-            return 0
-        elif nums[n // 2] == target:
-            return n // 2
-        elif nums[n // 2] > target:
-            return self.searchInsert(nums[:(n//2)], target)
-        else:
-            return n // 2 + self.searchInsert(nums[(n//2):], target)
-```
-
-Keypoint: **`self` keyword**: It ensures that the `searchInsert` method is called as part of the current instance of the `Solution` class.
-
 ### Climbing Stairs (1D-DP)
 
 You are climbing a staircase. It takes `n` steps to reach the top.
@@ -121,7 +95,7 @@ For a max-heap, use negative values:
 
 - **`heapq.heappush(heap, -item)`**
 
-### Is Subsequence
+### Is Subsequence (Two pointer)
 
 Given two strings `s` and `t`, return `true` *if* `s` *is a **subsequence** of* `t`*, or* `false` *otherwise*.
 
@@ -161,3 +135,25 @@ class Solution:
         return sp == len(s)
 ```
 
+### Majority Element (Hash table/Dictionary)
+
+Given an array `nums` of size `n`, return *the majority element*.
+
+The majority element is the element that appears more than `⌊n / 2⌋` times. You may assume that the majority element always exists in the array.
+
+```python
+class Solution:
+    def majorityElement(self, nums: List[int]) -> int:
+        hash = {}
+        count = m = 0
+        for num in nums:
+            
+            hash[num] = hash.get(num, 0) + 1
+            if hash[num] > count:
+                m = num
+                count = hash[num]
+
+        return m
+```
+
+To be honest, this question is not hard but I cannot solve it. I could solve it if I know the function `hash.get`, which returns the count if it already exists in the dictionary and 0 if it does not exist. 
