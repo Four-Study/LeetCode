@@ -1,38 +1,3 @@
-### Climbing Stairs (1D-DP)
-
-You are climbing a staircase. It takes `n` steps to reach the top.
-
-Each time you can either climb `1` or `2` steps. In how many distinct ways can you climb to the top?
-
-I first used recursive method to calculate it. I think this is right, but the time limit is exceeded. I actually prefer this answer. 
-
-```python
-class Solution:
-    def climbStairs(self, n: int) -> int:
-        if n == 1:
-            return 1
-        elif n == 2:
-            return 2
-        else:
-            return self.climbStairs(n-1) + self.climbStairs(n-2)
-```
-
-I utilized the `math` library in another solution. I like it less but it passed.
-
-```python
-import math
-class Solution:
-    def climbStairs(self, n: int) -> int:
-        a = n
-        b = 0
-        s = 0
-        while a >= 0:
-            s += math.comb(a + b, a)
-            a -= 2
-            b += 1
-        return s
-```
-
 ### Kth Largest Element in an Array (Heap)
 
 Given an integer array `nums` and an integer `k`, return *the* `kth` *largest element in the array*.
