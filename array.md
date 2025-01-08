@@ -39,18 +39,18 @@ This is just a variation of the problem twoSum.
 ```python
 class Solution:
     def twoSum(self, numbers: List[int], target: int) -> List[int]:
-		seen = {}
+        seen = {}
 
-    for i, value in enumerate(numbers): #1
-    # calculate the number that is needed
-        remaining = target - numbers[i] #2
+        for i, value in enumerate(numbers): #1
+        # calculate the number that is needed
+            remaining = target - numbers[i] #2
 
-        if remaining in seen: #3
-            # This is the only line I modified. I switched the order of the 
-            # two indexes, and add one to both of them
-            return [seen[remaining] + 1, i + 1]  #4
-        else:
-            seen[value] = i  #5
+            if remaining in seen: #3
+                # This is the only line I modified. I switched the order of the 
+                # two indexes, and add one to both of them
+                return [seen[remaining] + 1, i + 1]  #4
+            else:
+                seen[value] = i  #5
 ```
 
 ### 3 Sum
@@ -304,3 +304,106 @@ class Solution:
 ```
 
 I did not come up with this answer, and it took me long to understand it. The checks of `midx` and `nidx` are not only for the two purposes I put there. They are also the guarantees for running the program. 
+
+### Rotate Array
+
+Given an integer array `nums`, rotate the array to the right by `k` steps, where `k` is non-negative.
+
+**Example 1:**
+
+```
+Input: nums = [1,2,3,4,5,6,7], k = 3
+Output: [5,6,7,1,2,3,4]
+Explanation:
+rotate 1 steps to the right: [7,1,2,3,4,5,6]
+rotate 2 steps to the right: [6,7,1,2,3,4,5]
+rotate 3 steps to the right: [5,6,7,1,2,3,4]
+```
+
+My stupid solution here:
+
+```python
+class Solution:
+    def rotate(self, nums: List[int], k: int) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+        k %= len(nums)
+        temp = []
+        for i in range(1,k+1):
+            temp.append(nums[-i])
+        print(temp)
+        n = len(nums)
+        for i in range(n-k):
+            nums[n-1-i] = nums[n-k-1-i]
+
+        for i in range(k):
+            nums[i] = temp.pop()
+```
+
+**I did not add the line `k %= len(nums)`.** This is super important to ensure it's right when `k>len(nums)`. Check Leetcode, there are 3 ways to solve it. 
+
+One of the solutions makes use of the math thinking reversing. I really like this kind of idea:
+
+```python
+class Solution:
+    def reverse(self, nums: List[int], start: int, end: int) -> None:
+        while start < end:
+            nums[start], nums[end] = nums[end], nums[start]
+            start += 1
+            end -= 1
+
+    def rotate(self, nums: List[int], k: int) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+        k %= len(nums)
+        n = len(nums)
+
+        self.reverse(nums, 0, n-1)
+        self.reverse(nums, 0, k-1)
+        self.reverse(nums, k, n-1)
+```
+
+Another solution is also beautiful but it uses too much space:
+
+```python
+class Solution:
+    def rotate(self, nums: List[int], k: int) -> None:
+        n = len(nums)
+        a = [0] * n
+        for i in range(n):
+            a[(i + k) % n] = nums[i]
+
+        nums[:] = a
+```
+
+### Jump Game II
+
+You are given a **0-indexed** array of integers `nums` of length `n`. You are initially positioned at `nums[0]`.
+
+Each element `nums[i]` represents the maximum length of a forward jump from index `i`. In other words, if you are at `nums[i]`, you can jump to any `nums[i + j]` where:
+
+- `0 <= j <= nums[i]` and
+- `i + j < n`
+
+Return *the minimum number of jumps to reach* `nums[n - 1]`. The test cases are generated such that you can reach `nums[n - 1]`.
+
+```python
+class Solution:
+    def jump(self, nums: List[int]) -> int:
+        near = far = jumps = 0
+        n = len(nums)
+        while far < n - 1:
+            farthest = 0
+            for i in range(near, far + 1):
+                farthest = max(farthest, i + nums[i])
+
+            near = far + 1
+            far = farthest
+            jumps += 1
+
+        return jumps
+```
+
+All solutions use greedy algorithm to check for the farthest position to jump. The reason I couldn't solve it is: I am not sure this is the optimal way to do so. 
