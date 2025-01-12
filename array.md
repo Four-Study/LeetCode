@@ -407,3 +407,26 @@ class Solution:
 ```
 
 All solutions use greedy algorithm to check for the farthest position to jump. The reason I couldn't solve it is: I am not sure this is the optimal way to do so. 
+
+### Best Time to Buy and Sell Stock
+
+You are given an array `prices` where `prices[i]` is the price of a given stock on the `ith` day.
+
+You want to maximize your profit by choosing a **single day** to buy one stock and choosing a **different day in the future** to sell that stock.
+
+Return *the maximum profit you can achieve from this transaction*. If you cannot achieve any profit, return `0`.
+
+```python
+class Solution:
+    def maxProfit(self, prices: List[int]) -> int:
+        profit = 0
+        min_price = float('inf')
+        for i in range(len(prices)):
+            if prices[i] < min_price:
+                min_price = prices[i]
+            if prices[i] - min_price > profit:
+                profit = prices[i] - min_price
+        return profit
+```
+
+This is called an easy question, but I didn't find it easy. 
