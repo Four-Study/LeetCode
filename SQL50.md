@@ -1160,3 +1160,25 @@ SELECT LPAD(column_name, total_length, 'pad_char') AS left_padded,
        RPAD(column_name, total_length, 'pad_char') AS right_padded; # pad strings
 ```
 
+## Joins
+
+| Join Type  | Matches Required | Returns Unmatched Rows?   |
+| ---------- | ---------------- | ------------------------- |
+| INNER JOIN | Yes (Both)       | No                        |
+| LEFT JOIN  | Left table       | Yes (Right NULL)          |
+| RIGHT JOIN | Right table      | Yes (Left NULL)           |
+| FULL JOIN  | No (Both)        | Yes (Left & Right NULL)   |
+| CROSS JOIN | No match needed  | Returns Cartesian Product |
+| SELF JOIN  | Depends          | Joins a table with itself |
+
+## When statement
+
+```SQL
+CASE
+    WHEN condition1 THEN result1
+    WHEN condition2 THEN result2
+    WHEN conditionN THEN resultN
+    ELSE result
+END;
+```
+
