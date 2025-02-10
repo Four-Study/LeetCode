@@ -1087,7 +1087,7 @@ HAVING COUNT(student) >= 5;
 
 ## How to use `over`?
 
-#### Components:
+**Components:**
 
 1. **`<window_function>()`**:
    - A function to perform the operation (e.g., `SUM()`, `AVG()`, `ROW_NUMBER()`, etc.).
@@ -1181,4 +1181,40 @@ CASE
     ELSE result
 END;
 ```
+
+## Date and Time
+
+#### 1. Extracting Date/Time Parts
+
+| Function          | Description                                    | Example Output                 |
+| ----------------- | ---------------------------------------------- | ------------------------------ |
+| `YEAR(date)`      | Extracts year from a date                      | `YEAR('2024-02-09') → 2024`    |
+| `MONTH(date)`     | Extracts month from a date                     | `MONTH('2024-02-09') → 2`      |
+| `DAY(date)`       | Extracts day from a date                       | `DAY('2024-02-09') → 9`        |
+| `HOUR(time)`      | Extracts hour from a time                      | `HOUR('15:30:45') → 15`        |
+| `MINUTE(time)`    | Extracts minute from a time                    | `MINUTE('15:30:45') → 30`      |
+| `SECOND(time)`    | Extracts second from a time                    | `SECOND('15:30:45') → 45`      |
+| `DAYOFWEEK(date)` | Returns day of the week (1=Sunday, 7=Saturday) | `DAYOFWEEK('2024-02-09') → 6`  |
+| `DAYOFYEAR(date)` | Returns day of the year (1-366)                | `DAYOFYEAR('2024-02-09') → 40` |
+| `WEEK(date)`      | Returns the week number (1-52)                 | `WEEK('2024-02-09') → 6`       |
+| `QUARTER(date)`   | Returns the quarter (1-4)                      | `QUARTER('2024-02-09') → 1`    |
+
+#### 2. Adding & Subtracting Time Intervals
+
+| Function                          | Description                                     | Example Output                                          |
+| --------------------------------- | ----------------------------------------------- | ------------------------------------------------------- |
+| `DATE_ADD(date, INTERVAL X UNIT)` | Adds X time units to a date                     | `DATE_ADD('2024-02-09', INTERVAL 10 DAY) → 2024-02-19`  |
+| `DATE_SUB(date, INTERVAL X UNIT)` | Subtracts X time units from a date              | `DATE_SUB('2024-02-09', INTERVAL 2 MONTH) → 2023-12-09` |
+| `ADDDATE(date, INTERVAL X UNIT)`  | Same as `DATE_ADD()`                            | `ADDDATE('2024-02-09', INTERVAL 5 DAY) → 2024-02-14`    |
+| `SUBDATE(date, INTERVAL X UNIT)`  | Same as `DATE_SUB()`                            | `SUBDATE('2024-02-09', INTERVAL 1 YEAR) → 2023-02-09`   |
+| `TIMESTAMPADD(unit, X, date)`     | Adds X time units (alternative to `DATE_ADD()`) | `TIMESTAMPADD(DAY, 10, '2024-02-09') → 2024-02-19`      |
+| `DATEDIFF(date1, date2)`          | Returns difference in days                      | `DATEDIFF('2024-02-09', '2024-02-01') → 8`              |
+
+#### 3. Formatting Dates & Times
+
+| Function                    | Description                             | Example Output                                               |
+| --------------------------- | --------------------------------------- | ------------------------------------------------------------ |
+| `DATE_FORMAT(date, format)` | Formats a date using a specific pattern | `DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s') → '2024-02-09 15:30:45'` |
+| `TIME_FORMAT(time, format)` | Formats a time using a specific pattern | `TIME_FORMAT('15:30:45', '%H:%i') → '15:30'`                 |
+| `STR_TO_DATE(str, format)`  | Parses a string into a date             | `STR_TO_DATE('09-02-2024', '%d-%m-%Y') → '2024-02-09'`       |
 
