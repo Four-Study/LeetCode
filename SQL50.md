@@ -25,7 +25,7 @@ WHERE referee_id <> 2 OR referee_id is null
 
 Key point: In SQL, a comparison between a `null` value and any other value (including another `null`) using a comparison operator (eg `=`, `!=`, `<`, etc) will result in a `null`, which is considered as `false` for the purposes of a where clause (strictly speaking, it's "not true", rather than "false", but the effect is the same).
 
-### Rising Temperature
+### !!! Rising Temperature
 
 Table: `Weather`
 
@@ -56,7 +56,7 @@ FROM Weather w1, Weather w2
 WHERE DATEDIFF(w1.recordDate, w2.recordDate) = 1 AND w1.temperature > w2.temperature;
 ```
 
-### Average Time of Process per Machine
+### !!! Average Time of Process per Machine
 
 Table: `Activity`
 
@@ -109,7 +109,7 @@ GROUP BY machine_id;
 
 Start thinking from the inner one and the larger one. 
 
-### Students and Examinations
+### !!! Students and Examinations
 
 Table: `Students`
 
@@ -233,7 +233,7 @@ GROUP BY m.managerId
 HAVING COUNT(m.managerId) >= 5
 ```
 
-### Confirmation Rate
+### !!! Confirmation Rate
 
 Table: `Signups`
 
@@ -371,7 +371,7 @@ on p.product_id=u.product_id and p.start_date <= u.purchase_date and u.purchase_
 group by product_id;
 ```
 
-### Percentage of Users Attended a Contest
+### !!! Percentage of Users Attended a Contest
 
 Table: `Users`
 
@@ -417,7 +417,7 @@ group by contest_id
 order by percentage desc, contest_id asc;
 ```
 
-### Queries Quality and Percentage
+### !!! Queries Quality and Percentage
 
 Table: `Queries`
 
@@ -461,7 +461,7 @@ from Queries
 group by query_name;
 ```
 
-### Monthly Transactions I
+### !!! Monthly Transactions I
 
 Table: `Transactions`
 
@@ -688,7 +688,7 @@ where cnt >= 5;
 
 The above is my answer, but I think it is necessary to learn the difference between `where` and `having`.
 
-### Biggest Single Number
+### !!! Biggest Single Number
 
 Table: `MyNumbers`
 
@@ -755,7 +755,7 @@ order by employee_id;
 
 This question took me a long time. I did not want to use `join` to solve this. But it turns out to be more convenient in this way. 
 
-### Consecutive Numbers
+### !!! Consecutive Numbers
 
 Table: `Logs`
 
@@ -788,7 +788,7 @@ WHERE l1.num = l2.num AND l2.num = l3.num;
 
 I joined once and didn't get the correct solution. It looks like we should join two times to solve.
 
-### Product Price at a Given Date
+### !!! Product Price at a Given Date
 
 Table: `Products`
 
@@ -829,7 +829,7 @@ group by product_id
 having min(change_date) > '20190816'
 ```
 
-### Count Salary Categories
+### !!! Count Salary Categories
 
 Table: `Accounts`
 
@@ -920,7 +920,7 @@ Points:
 )
 ```
 
-### Restaurant Growth
+### !!! Restaurant Growth
 
 Table: `Customer`
 
